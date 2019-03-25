@@ -1,0 +1,5 @@
+{
+  "pipeline.bam": "/home/cagaser/SvCallingMerging/data/bam/Delly_HG00514_CHS_HGSV.all.vcf",
+  "pipeline.sample": "HG00514_CHS_HGSV"
+}
+

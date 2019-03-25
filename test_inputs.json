@@ -1,0 +1,7 @@
+{
+  "testing.reference": "/home/cagaser/genomes/reference.fa",
+  "testing.iReference": "/home/cagaser/genomes/reference.fa.fai",
+  "testing.bam": "/home/cagaser/data/700014000002.realign.bam",
+  "testing.bai": "/home/cagaser/data/700014000002.realign.bai"
+}
+
