@@ -1,0 +1,5 @@
+{
+  "pipeline.sample": "HG00514",
+  "pipeline.bam":  "/exports/sascstudent/cedrick/project-MinE/data/05-VCF-merging/phase1_callset/delly/HG00514_CHS_HGSV/HG00514_CHS_HGSV.all.vcf"
+}
+
