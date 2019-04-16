@@ -1,0 +1,13 @@
+{
+  "pipeline.sample": "U0a_CGATGT_L001",
+  "pipeline.reference": {
+    "fasta": "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/bwa/reference.fa",
+    "fai": "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/bwa/reference.fa.fai",
+    "dict": "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/bwa/reference.dict"
+  },
+  "pipeline.bamFile": {
+    "file": "/exports/sascstudent/cedrick/wdl/data/U0a_CGATGT_L001.sorted.mapped.bam",
+    "index": "/exports/sascstudent/cedrick/wdl/data/U0a_CGATGT_L001.sorted.mapped.bam.bai"
+  }
+}
+
