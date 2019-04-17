@@ -14,10 +14,9 @@ workflow SVcalling {
         IndexedBamFile bamFile
         Reference reference
         String sample
+        String outputDir
     }
-    
-    String outputDir = 'Structural-Variants'
- 
+     
     call delly.CallSV as delly {
         input:
             bamFile = bamFile,
@@ -25,6 +24,7 @@ workflow SVcalling {
             outputPath = outputDir + '/' + sample + ".delly.bcf"
     }   
 
+#Dpendencies issues: missing bwa in the container
 #    call clever.Prediction as clever {
 #        input:
 #            bamFile = bamFile,
@@ -39,7 +39,8 @@ workflow SVcalling {
 #            predictions = clever.predictions,
 #            outputPath = outputDir + '/' + sample + ".clever"
 #    }
-    
+
+## dependencies issue: still missing hexdump    
 #    call lumpy.CallSV as lumpy {
 #        input:
 #            bamFile = bamFile,
@@ -61,6 +62,7 @@ workflow SVcalling {
             outputPath = outputDir + '/' + sample + ".delly"
     } 
 
+#use this when clever is fixed
 #    Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
 #        (mateclever.matecleverVcf, "clever")]
     Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta")]
