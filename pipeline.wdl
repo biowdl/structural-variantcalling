@@ -9,7 +9,7 @@ import "tasks/survivor.wdl" as survivor
 import "tasks/clever.wdl" as clever
 import "tasks/lumpy.wdl" as lumpy
 
-workflow pipeline {
+workflow SV-calling {
     input {
         IndexedBamFile bamFile
         Reference reference
@@ -20,7 +20,7 @@ workflow pipeline {
         input:
             bamFile = bamFile,
             reference = reference,
-            outputPath = sample + ".delly"
+            outputPath = sample + ".delly.bcf"
     }   
 
     call clever.Prediction as clever {
@@ -59,7 +59,8 @@ workflow pipeline {
             outputPath = sample + ".delly"
     } 
 
-    Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), (mateclever.matecleverVcf, "clever")]
+    Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
+        (mateclever.matecleverVcf, "clever")]
     
     scatter (pair in pairs){
         call picard.RenameSample as renameSample {
