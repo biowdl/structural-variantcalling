@@ -15,19 +15,21 @@ workflow SV-calling {
         Reference reference
         String sample
     }
+    
+    String outputDir = 'Structural-Variants'
  
     call delly.CallSV as delly {
         input:
             bamFile = bamFile,
             reference = reference,
-            outputPath = sample + ".delly.bcf"
+            outputPath = outputDir + '/' + sample + ".delly.bcf"
     }   
 
     call clever.Prediction as clever {
         input:
             bamFile = bamFile,
             reference = reference,
-            outputPath = sample + ".clever"
+            outputPath = outputDir + '/' + sample + ".clever"
     } 
     
     call clever.Mateclever as mateclever {
@@ -35,14 +37,14 @@ workflow SV-calling {
             bamFile = bamFile,
             reference = reference,
             predictions = clever.predictions,
-            outputPath = sample + ".clever"
+            outputPath = outputDir + '/' + sample + ".clever"
     }
     
 #    call lumpy.CallSV as lumpy {
 #        input:
 #            bamFile = bamFile,
 #            reference = reference,
-#            outputPath = sample + ".lumpy"
+#            outputPath = outputDir + '/' + sample + ".lumpy"
 #    }
 
     
@@ -56,7 +58,7 @@ workflow SV-calling {
     call bcftools.Bcf2Vcf as delly2vcf {
         input:
             bcf = delly.dellyVcf,
-            outputPath = sample + ".delly"
+            outputPath = outputDir + '/' + sample + ".delly"
     } 
 
     Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
@@ -76,5 +78,6 @@ workflow SV-calling {
         input:
             filePaths = filePaths,
             sample = sample
+            outputPath = outputDir + '/' sample + 'merged.vcf'
     }
 }
