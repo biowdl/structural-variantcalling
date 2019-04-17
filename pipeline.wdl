@@ -53,7 +53,7 @@ workflow SVcalling {
         input:
             normalBam = bamFile,
             reference = reference,
-            runDir = sample + ".manta"
+            runDir = outputDir + '/' + sample + ".manta"
     }
     
     call bcftools.Bcf2Vcf as delly2vcf {
