@@ -9,7 +9,7 @@ import "tasks/survivor.wdl" as survivor
 import "tasks/clever.wdl" as clever
 import "tasks/lumpy.wdl" as lumpy
 
-workflow SV-calling {
+workflow SVcalling {
     input {
         IndexedBamFile bamFile
         Reference reference
@@ -25,20 +25,20 @@ workflow SV-calling {
             outputPath = outputDir + '/' + sample + ".delly.bcf"
     }   
 
-    call clever.Prediction as clever {
-        input:
-            bamFile = bamFile,
-            reference = reference,
-            outputPath = outputDir + '/' + sample + ".clever"
-    } 
+#    call clever.Prediction as clever {
+#        input:
+#            bamFile = bamFile,
+#            reference = reference,
+#            outputPath = outputDir + '/' + sample + ".clever"
+#    } 
     
-    call clever.Mateclever as mateclever {
-        input:
-            bamFile = bamFile,
-            reference = reference,
-            predictions = clever.predictions,
-            outputPath = outputDir + '/' + sample + ".clever"
-    }
+#    call clever.Mateclever as mateclever {
+#        input:
+#            bamFile = bamFile,
+#            reference = reference,
+#            predictions = clever.predictions,
+#            outputPath = outputDir + '/' + sample + ".clever"
+#    }
     
 #    call lumpy.CallSV as lumpy {
 #        input:
@@ -61,9 +61,10 @@ workflow SV-calling {
             outputPath = outputDir + '/' + sample + ".delly"
     } 
 
-    Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
-        (mateclever.matecleverVcf, "clever")]
-    
+#    Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
+#        (mateclever.matecleverVcf, "clever")]
+    Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta")]
+  
     scatter (pair in pairs){
         call picard.RenameSample as renameSample {
             input:
@@ -77,7 +78,7 @@ workflow SV-calling {
     call survivor.Merge as survivor {
         input:
             filePaths = filePaths,
-            sample = sample
-            outputPath = outputDir + '/' sample + 'merged.vcf'
+            sample = sample,
+            outputPath = outputDir + '/' + sample + 'merged.vcf'
     }
 }
