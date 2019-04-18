@@ -63,11 +63,11 @@ workflow SVcalling {
     } 
 
 #use this when clever is fixed
-#    Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
+#    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
 #        (mateclever.matecleverVcf, "clever")]
-    Array[Pair[File,String]] pairs = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta")]
+    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta")]
   
-    scatter (pair in pairs){
+    scatter (pair in vcfAndCaller){
         call picard.RenameSample as renameSample {
             input:
                 inputVcf = pair.left,
