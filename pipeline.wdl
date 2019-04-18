@@ -76,11 +76,9 @@ workflow SVcalling {
         }
     }
     
-    File filePaths = write_lines(renameSample.renamedVcf)
-       
     call survivor.Merge as survivor {
         input:
-            filePaths = filePaths,
+            filePaths = renameSample.renamedVcf,
             sample = sample,
             outputPath = outputDir + '/' + sample + 'merged.vcf'
     }
