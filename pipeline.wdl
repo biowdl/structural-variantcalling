@@ -59,7 +59,7 @@ workflow SVcalling {
     call bcftools.Bcf2Vcf as delly2vcf {
         input:
             bcf = delly.dellyVcf,
-            outputPath = outputDir + '/' + sample + ".delly"
+            outputPath = outputDir + '/' + sample + ".delly.vcf"
     } 
 
 #use this when clever is fixed
