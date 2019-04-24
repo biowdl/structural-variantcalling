@@ -61,7 +61,7 @@ workflow SVcalling {
             bcf = delly.dellyBcf,
             outputPath = outputDir + '/delly/' + sample + '/' + sample + ".delly.vcf"
     } 
-#
+
 #use this when clever is fixed
 #    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
 #        (mateclever.matecleverVcf, "clever")]
