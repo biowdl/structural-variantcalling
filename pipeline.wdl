@@ -21,7 +21,7 @@ workflow SVcalling {
         input:
             bamFile = bamFile,
             reference = reference,
-            outputPath = outputDir + '/' + sample + ".delly.bcf"
+            outputPath = outputDir + '/delly/' + sample + '/' + sample + ".delly.bcf"
     }   
 
 #Dpendencies issues: missing bwa in the container
@@ -29,7 +29,7 @@ workflow SVcalling {
 #        input:
 #            bamFile = bamFile,
 #            reference = reference,
-#            outputPath = outputDir + '/' + sample + ".clever"
+#            outputPath = outputDir + '/clever/' + sample
 #    } 
     
 #    call clever.Mateclever as mateclever {
@@ -37,7 +37,7 @@ workflow SVcalling {
 #            bamFile = bamFile,
 #            reference = reference,
 #            predictions = clever.predictions,
-#            outputPath = outputDir + '/' + sample + ".clever"
+#            outputPath = outputDir + '/clever/' + sample
 #    }
 
 ## dependencies issue: still missing hexdump    
@@ -45,7 +45,7 @@ workflow SVcalling {
 #        input:
 #            bamFile = bamFile,
 #            reference = reference,
-#            outputPath = outputDir + '/' + sample + ".lumpy"
+#            outputPath = outputDir + '/lumpy/' + sample
 #    }
 
     
@@ -53,15 +53,15 @@ workflow SVcalling {
         input:
             normalBam = bamFile,
             reference = reference,
-            runDir = outputDir + '/' + sample + ".manta"
+            runDir = outputDir + '/manta/' + sample
     }
     
     call bcftools.Bcf2Vcf as delly2vcf {
         input:
-            bcf = delly.dellyVcf,
-            outputPath = outputDir + '/' + sample + ".delly.vcf"
+            bcf = delly.dellyBcf,
+            outputPath = outputDir + '/delly/' + sample + '/' + sample + ".delly.vcf"
     } 
-
+#
 #use this when clever is fixed
 #    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
 #        (mateclever.matecleverVcf, "clever")]
@@ -80,6 +80,6 @@ workflow SVcalling {
         input:
             filePaths = renameSample.renamedVcf,
             sample = sample,
-            outputPath = outputDir + '/' + sample + 'merged.vcf'
+            outputPath = outputDir + '/survivor/' + sample + 'merged.vcf'
     }
 }
