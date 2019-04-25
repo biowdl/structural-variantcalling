@@ -71,7 +71,7 @@ workflow SVcalling {
         call picard.RenameSample as renameSample {
             input:
                 inputVcf = pair.left,
-                outputPath = sample + "." + pair.right + '.vcf',
+                outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
                 newSampleName = sample + "." + pair.right 
         }
     }
@@ -82,4 +82,5 @@ workflow SVcalling {
             sample = sample,
             outputPath = outputDir + '/survivor/' + sample + 'merged.vcf'
     }
+    
 }
