@@ -80,7 +80,7 @@ workflow SVcalling {
         input:
             filePaths = renameSample.renamedVcf,
             sample = sample,
-            outputPath = outputDir + '/survivor/' + sample + 'merged.vcf'
+            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
     }
     
 }
