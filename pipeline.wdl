@@ -8,11 +8,13 @@ import "tasks/bcftools.wdl" as bcftools
 import "tasks/survivor.wdl" as survivor
 import "tasks/clever.wdl" as clever
 import "tasks/lumpy.wdl" as lumpy
+import "tasks/bwa.wdl" as bwa
 
 workflow SVcalling {
     input {
         IndexedBamFile bamFile
         Reference reference
+        BwaIndex bwaIndex
         String sample
         String outputDir
     }
@@ -24,21 +26,20 @@ workflow SVcalling {
             outputPath = outputDir + '/delly/' + sample + '/' + sample + ".delly.bcf"
     }   
 
-#Dpendencies issues: missing bwa in the container
-#    call clever.Prediction as clever {
-#        input:
-#            bamFile = bamFile,
-#            reference = reference,
-#            outputPath = outputDir + '/clever/' + sample
-#    } 
-    
-#    call clever.Mateclever as mateclever {
-#        input:
-#            bamFile = bamFile,
-#            reference = reference,
-#            predictions = clever.predictions,
-#            outputPath = outputDir + '/clever/' + sample
-#    }
+    call clever.Prediction as clever {
+        input:
+            bamFile = bamFile,
+            bwaIndex = bwaIndex,
+            outputPath = outputDir + '/clever/' + sample
+    } 
+   
+    call clever.Mateclever as mateclever {
+        input:
+            bamFile = bamFile,
+            bwaIndex = bwaIndex,
+            predictions = clever.predictions,
+            outputPath = outputDir + '/clever/' + sample
+    }
 
 ## dependencies issue: still missing hexdump    
 #    call lumpy.CallSV as lumpy {
@@ -65,22 +66,22 @@ workflow SVcalling {
 #use this when clever is fixed
 #    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
 #        (mateclever.matecleverVcf, "clever")]
-    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta")]
+#    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta")]
   
-    scatter (pair in vcfAndCaller){
-        call picard.RenameSample as renameSample {
-            input:
-                inputVcf = pair.left,
-                outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
-                newSampleName = sample + "." + pair.right 
-        }
-    }
-    
-    call survivor.Merge as survivor {
-        input:
-            filePaths = renameSample.renamedVcf,
-            sample = sample,
-            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
-    }
+#    scatter (pair in vcfAndCaller){
+#        call picard.RenameSample as renameSample {
+#            input:
+#                inputVcf = pair.left,
+#                outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
+#                newSampleName = sample + "." + pair.right 
+#        }
+#    }
+#    
+#    call survivor.Merge as survivor {
+#        input:
+#            filePaths = renameSample.renamedVcf,
+#            sample = sample,
+#            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
+#    }
     
 }
