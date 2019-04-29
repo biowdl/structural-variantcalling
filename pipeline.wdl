@@ -84,4 +84,16 @@ workflow SVcalling {
             outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
     }
     
+    output {
+        File cleverPredictions = clever.predictions
+        File cleverVcf = mateclever.matecleverVcf
+        File mantaVcf = manta.diploidSV
+        File mantdaCandidateSV = manta.candidateSV
+        File mantdaSmallIndels = manta.candidateSmallIndels
+        File dellyBcf = delly.dellyBcf
+        File dellyVcf = delly2vcf.OutputVcf
+        File survivorVcf = survivor.mergedVcf 
+        Array[File] renamedVcfs = renameSample.renamedVcf 
+    }
+    
 }
