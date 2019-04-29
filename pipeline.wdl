@@ -64,24 +64,24 @@ workflow SVcalling {
     } 
 
 #use this when clever is fixed
-#    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
-#        (mateclever.matecleverVcf, "clever")]
+    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
+        (mateclever.matecleverVcf, "clever")]
 #    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta")]
   
-#    scatter (pair in vcfAndCaller){
-#        call picard.RenameSample as renameSample {
-#            input:
-#                inputVcf = pair.left,
-#                outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
-#                newSampleName = sample + "." + pair.right 
-#        }
-#    }
-#    
-#    call survivor.Merge as survivor {
-#        input:
-#            filePaths = renameSample.renamedVcf,
-#            sample = sample,
-#            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
-#    }
+    scatter (pair in vcfAndCaller){
+        call picard.RenameSample as renameSample {
+            input:
+                inputVcf = pair.left,
+                outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
+                newSampleName = sample + "." + pair.right 
+        }
+    }
+    
+    call survivor.Merge as survivor {
+        input:
+            filePaths = renameSample.renamedVcf,
+            sample = sample,
+            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
+    }
     
 }
