@@ -23,29 +23,29 @@ workflow SVcalling {
         input:
             bamFile = bamFile,
             reference = reference,
-            outputPath = outputDir + '/delly/' + sample + '/' + sample + ".delly.bcf"
+            outputPath = outputDir + '/delly/' + sample + ".delly.bcf"
     }   
 
     call bcftools.Bcf2Vcf as delly2vcf {
         input:
             bcf = delly.dellyBcf,
-            outputPath = outputDir + '/delly/' + sample + '/' + sample + ".delly.vcf"
+            outputPath = outputDir + '/delly/' + sample + ".delly.vcf"
     } 
 
-    call clever.Prediction as clever {
-        input:
-            bamFile = bamFile,
-            bwaIndex = bwaIndex,
-            outputPath = outputDir + '/clever/' + sample
-    } 
-   
-    call clever.Mateclever as mateclever {
-        input:
-            bamFile = bamFile,
-            bwaIndex = bwaIndex,
-            predictions = clever.predictions,
-            outputPath = outputDir + '/clever/' + sample
-    }
+#    call clever.Prediction as clever {
+#        input:
+#            bamFile = bamFile,
+#            bwaIndex = bwaIndex,
+#            outputPath = outputDir + '/clever/' + sample
+#    } 
+#   
+#    call clever.Mateclever as mateclever {
+#        input:
+#            bamFile = bamFile,
+#            bwaIndex = bwaIndex,
+#            predictions = clever.predictions,
+#            outputPath = outputDir + '/clever/' + sample
+#    }
 
 ## dependencies issue: still missing hexdump    
 #    call lumpy.CallSV as lumpy {
@@ -56,42 +56,42 @@ workflow SVcalling {
 #    }
 
     
-    call manta.Germline as manta {
-        input:
-            normalBam = bamFile,
-            reference = reference,
-            runDir = outputDir + '/manta/' + sample
-    }
+#    call manta.Germline as manta {
+#        input:
+#            normalBam = bamFile,
+#            reference = reference,
+#            runDir = outputDir + '/manta/' + sample
+#    }
     
 #use this when clever is fixed
-    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
-        (mateclever.matecleverVcf, "clever")]
+#    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
+#        (mateclever.matecleverVcf, "clever")]
 #    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta")]
-  
-    scatter (pair in vcfAndCaller){
-        call picard.RenameSample as renameSample {
-            input:
-                inputVcf = pair.left,
-                outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
-                newSampleName = sample + "." + pair.right 
-        }
-    }
-    
-    call survivor.Merge as survivor {
-        input:
-            filePaths = renameSample.renamedVcf,
-            sample = sample,
-            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
-    }
-    
-    output {
-        File cleverPredictions = clever.predictions
-        File cleverVcf = mateclever.matecleverVcf
-        IndexedVcfFile mantaVcf = manta.diploidSV
-        File dellyBcf = delly.dellyBcf
-        File dellyVcf = delly2vcf.OutputVcf
-        File survivorVcf = survivor.mergedVcf 
-        Array[File] renamedVcfs = renameSample.renamedVcf 
-    }
+
+#    scatter (pair in vcfAndCaller){
+#        call picard.RenameSample as renameSample {
+#            input:
+#                inputVcf = pair.left,
+#                outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
+#                newSampleName = sample + "." + pair.right 
+#        }
+#    }
+#    
+#    call survivor.Merge as survivor {
+#        input:
+#            filePaths = renameSample.renamedVcf,
+#            sample = sample,
+#            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
+#    }
+#    
+#    output {
+#        File cleverPredictions = clever.predictions
+#        File cleverVcf = mateclever.matecleverVcf
+#        IndexedVcfFile mantaVcf = manta.diploidSV
+#        File dellyBcf = delly.dellyBcf
+#        File dellyVcf = delly2vcf.OutputVcf
+#        File survivorVcf = survivor.mergedVcf 
+#        Array[File] renamedVcfs = renameSample.renamedVcf 
+#    }
     
 }
