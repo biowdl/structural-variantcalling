@@ -32,21 +32,28 @@ workflow SVcalling {
 #            outputPath = outputDir + '/delly/' + sample + ".delly.vcf"
 #    } 
 
-    call clever.Prediction as clever {
-        input:
-            bamFile = bamFile,
-            bwaIndex = bwaIndex,
-            outputPath = outputDir + '/clever/'
-    } 
-   
-    call clever.Mateclever as mateclever {
-        input:
-            bamFile = bamFile,
-            bwaIndex = bwaIndex,
-            predictions = clever.predictions,
-            outputPath = outputDir + '/clever/'
-    }
+#    call clever.Prediction as clever {
+#        input:
+#            bamFile = bamFile,
+#            bwaIndex = bwaIndex,
+#            outputPath = outputDir + '/clever/'
+#    } 
+#   
+#    call clever.Mateclever as mateclever {
+#        input:
+#            bamFile = bamFile,
+#            bwaIndex = bwaIndex,
+#            predictions = clever.predictions,
+#            outputPath = outputDir + '/clever/'
+#    }
 
+#    call manta.Germline as manta {
+#        input:
+#            normalBam = bamFile,
+#            reference = reference,
+#            runDir = outputDir + '/manta/'
+#    }
+ 
 ## dependencies issue: still missing hexdump    
 #    call lumpy.CallSV as lumpy {
 #        input:
@@ -56,13 +63,7 @@ workflow SVcalling {
 #    }
 
     
-#    call manta.Germline as manta {
-#        input:
-#            normalBam = bamFile,
-#            reference = reference,
-#            runDir = outputDir + '/manta/'
-#    }
-    
+   
 #use this when clever is fixed
 #    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
 #        (mateclever.matecleverVcf, "clever")]
