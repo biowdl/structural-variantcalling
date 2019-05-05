@@ -26,6 +26,12 @@ workflow SVcalling {
             outputPath = outputDir + '/delly/' + sample + '/' + sample + ".delly.bcf"
     }   
 
+    call bcftools.Bcf2Vcf as delly2vcf {
+        input:
+            bcf = delly.dellyBcf,
+            outputPath = outputDir + '/delly/' + sample + '/' + sample + ".delly.vcf"
+    } 
+
     call clever.Prediction as clever {
         input:
             bamFile = bamFile,
@@ -57,12 +63,6 @@ workflow SVcalling {
             runDir = outputDir + '/manta/' + sample
     }
     
-    call bcftools.Bcf2Vcf as delly2vcf {
-        input:
-            bcf = delly.dellyBcf,
-            outputPath = outputDir + '/delly/' + sample + '/' + sample + ".delly.vcf"
-    } 
-
 #use this when clever is fixed
     Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
         (mateclever.matecleverVcf, "clever")]
