@@ -19,40 +19,40 @@ workflow SVcalling {
         String outputDir
     }
      
-    call delly.CallSV as delly {
+#    call delly.CallSV as delly {
+#        input:
+#            bamFile = bamFile,
+#            reference = reference,
+#            outputPath = outputDir + '/delly/' + sample + ".delly.bcf"
+#    }   
+#
+#    call bcftools.Bcf2Vcf as delly2vcf {
+#        input:
+#            bcf = delly.dellyBcf,
+#            outputPath = outputDir + '/delly/' + sample + ".delly.vcf"
+#    } 
+
+    call clever.Prediction as clever {
         input:
             bamFile = bamFile,
-            reference = reference,
-            outputPath = outputDir + '/delly/' + sample + ".delly.bcf"
-    }   
-
-    call bcftools.Bcf2Vcf as delly2vcf {
-        input:
-            bcf = delly.dellyBcf,
-            outputPath = outputDir + '/delly/' + sample + ".delly.vcf"
+            bwaIndex = bwaIndex,
+            outputPath = outputDir + '/clever/'
     } 
-
-#    call clever.Prediction as clever {
-#        input:
-#            bamFile = bamFile,
-#            bwaIndex = bwaIndex,
-#            outputPath = outputDir + '/clever/' + sample
-#    } 
-#   
-#    call clever.Mateclever as mateclever {
-#        input:
-#            bamFile = bamFile,
-#            bwaIndex = bwaIndex,
-#            predictions = clever.predictions,
-#            outputPath = outputDir + '/clever/' + sample
-#    }
+   
+    call clever.Mateclever as mateclever {
+        input:
+            bamFile = bamFile,
+            bwaIndex = bwaIndex,
+            predictions = clever.predictions,
+            outputPath = outputDir + '/clever/'
+    }
 
 ## dependencies issue: still missing hexdump    
 #    call lumpy.CallSV as lumpy {
 #        input:
 #            bamFile = bamFile,
 #            reference = reference,
-#            outputPath = outputDir + '/lumpy/' + sample
+#            outputPath = outputDir + '/lumpy/'
 #    }
 
     
@@ -60,7 +60,7 @@ workflow SVcalling {
 #        input:
 #            normalBam = bamFile,
 #            reference = reference,
-#            runDir = outputDir + '/manta/' + sample
+#            runDir = outputDir + '/manta/'
 #    }
     
 #use this when clever is fixed
