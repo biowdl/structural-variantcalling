@@ -19,40 +19,40 @@ workflow SVcalling {
         String outputDir
     }
      
-#    call delly.CallSV as delly {
-#        input:
-#            bamFile = bamFile,
-#            reference = reference,
-#            outputPath = outputDir + '/delly/' + sample + ".delly.bcf"
-#    }   
-#
-#    call bcftools.Bcf2Vcf as delly2vcf {
-#        input:
-#            bcf = delly.dellyBcf,
-#            outputPath = outputDir + '/delly/' + sample + ".delly.vcf"
-#    } 
+    call delly.CallSV as delly {
+        input:
+            bamFile = bamFile,
+            reference = reference,
+            outputPath = outputDir + '/delly/' + sample + ".delly.bcf"
+    }   
 
-#    call clever.Prediction as clever {
-#        input:
-#            bamFile = bamFile,
-#            bwaIndex = bwaIndex,
-#            outputPath = outputDir + '/clever/'
-#    } 
-#   
-#    call clever.Mateclever as mateclever {
-#        input:
-#            bamFile = bamFile,
-#            bwaIndex = bwaIndex,
-#            predictions = clever.predictions,
-#            outputPath = outputDir + '/clever/'
-#    }
+    call bcftools.Bcf2Vcf as delly2vcf {
+        input:
+            bcf = delly.dellyBcf,
+            outputPath = outputDir + '/delly/' + sample + ".delly.vcf"
+    } 
 
-#    call manta.Germline as manta {
-#        input:
-#            normalBam = bamFile,
-#            reference = reference,
-#            runDir = outputDir + '/manta/'
-#    }
+    call clever.Prediction as clever {
+        input:
+            bamFile = bamFile,
+            bwaIndex = bwaIndex,
+            outputPath = outputDir + '/clever/'
+    } 
+   
+    call clever.Mateclever as mateclever {
+        input:
+            bamFile = bamFile,
+            bwaIndex = bwaIndex,
+            predictions = clever.predictions,
+            outputPath = outputDir + '/clever/'
+    }
+
+    call manta.Germline as manta {
+        input:
+            normalBam = bamFile,
+            reference = reference,
+            runDir = outputDir + '/manta/'
+    }
  
 ## dependencies issue: still missing hexdump    
 #    call lumpy.CallSV as lumpy {
@@ -65,26 +65,26 @@ workflow SVcalling {
     
    
 #use this when clever is fixed
-#    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
-#        (mateclever.matecleverVcf, "clever")]
+    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
+        (mateclever.matecleverVcf, "clever")]
 #    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta")]
 
-#    scatter (pair in vcfAndCaller){
-#        call picard.RenameSample as renameSample {
-#            input:
-#                inputVcf = pair.left,
-#                outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
-#                newSampleName = sample + "." + pair.right 
-#        }
-#    }
-#    
-#    call survivor.Merge as survivor {
-#        input:
-#            filePaths = renameSample.renamedVcf,
-#            sample = sample,
-#            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
-#    }
-#    
+    scatter (pair in vcfAndCaller){
+        call picard.RenameSample as renameSample {
+            input:
+                inputVcf = pair.left,
+                outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
+                newSampleName = sample + "." + pair.right 
+        }
+    }
+    
+    call survivor.Merge as survivor {
+        input:
+            filePaths = renameSample.renamedVcf,
+            sample = sample,
+            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
+    }
+    
 #    output {
 #        File cleverPredictions = clever.predictions
 #        File cleverVcf = mateclever.matecleverVcf
