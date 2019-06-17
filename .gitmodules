@@ -1,3 +1,0 @@
-[submodule "tasks"]
-	path = tasks
-	url = https://github.com/biowdl/tasks
