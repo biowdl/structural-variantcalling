@@ -8,8 +8,8 @@
   "SVcalling.bwaIndex": {
     "fastaFile": "tests/data/reference/bwa/reference.fasta",
     "indexFiles": [
-        "tests/data/reference/bwa/refrence.fasta.sa",
-        "tests/data/reference/bwa/eference.fasta.amb",
+        "tests/data/reference/bwa/reference.fasta.sa",
+        "tests/data/reference/bwa/reference.fasta.amb",
         "tests/data/reference/bwa/reference.fasta.ann",
         "tests/data/reference/bwa/reference.fasta.bwt",
         "tests/data/reference/bwa/reference.fasta.pac"
