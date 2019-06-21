@@ -7,7 +7,6 @@ import "tasks/picard.wdl" as picard
 import "tasks/bcftools.wdl" as bcftools
 import "tasks/survivor.wdl" as survivor
 import "tasks/clever.wdl" as clever
-import "tasks/lumpy.wdl" as lumpy
 import "tasks/bwa.wdl" as bwa
 
 workflow SVcalling {
@@ -54,16 +53,6 @@ workflow SVcalling {
             runDir = outputDir + '/manta/'
     }
  
-## dependencies issue: still missing hexdump    
-#    call lumpy.CallSV as lumpy {
-#        input:
-#            bamFile = bamFile,
-#            reference = reference,
-#            outputPath = outputDir + '/lumpy/'
-#    }
-
-    
-   
 #use this when clever is fixed
     Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
         (mateclever.matecleverVcf, "clever")]
