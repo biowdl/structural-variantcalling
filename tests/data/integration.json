@@ -1,24 +1,24 @@
 {
   "SVcalling.sample": "sample-test",
-  "SVcalling.outputDir": "/exports/sascstudent/cedrick/project-223-vandoorn-melanoma/analysis/16_structural_variant_biowdl_test/functional",
+  "SVcalling.outputDir": "/exports/sascstudent/cedrick",
   "SVcalling.bamFile": {
-    "file": "/exports/sasc-testing/fixtures/samples/sv/ref_with_svs.bam",
-    "index": "/exports/sasc-testing/fixtures/samples/sv/ref_with_svs.bai"
+    "file": "tests/data/ref_with_svs.bam",
+    "index": "tests/data/ref_with_svs.bai"
   },
   "SVcalling.bwaIndex": {
-    "fastaFile": "/exports/sasc-testing/fixtures/references/test/reference/bwa/reference.fasta",
+    "fastaFile": "tests/data/reference/bwa/reference.fasta",
     "indexFiles": [
-        "/exports/sasc-testing/fixtures/references/test/reference/bwa/reference.fasta.sa",
-        "/exports/sasc-testing/fixtures/references/test/reference/bwa/reference.fasta.amb",
-        "/exports/sasc-testing/fixtures/references/test/reference/bwa/reference.fasta.ann",
-        "/exports/sasc-testing/fixtures/references/test/reference/bwa/reference.fasta.bwt",
-        "/exports/sasc-testing/fixtures/references/test/reference/bwa/reference.fasta.pac"
+        "tests/data/reference/bwa/refrence.fasta.sa",
+        "tests/data/reference/bwa/eference.fasta.amb",
+        "tests/data/reference/bwa/reference.fasta.ann",
+        "tests/data/reference/bwa/reference.fasta.bwt",
+        "tests/data/reference/bwa/reference.fasta.pac"
             ]
   },
   "SVcalling.reference": {
-    "fasta": "/exports/sasc-testing/fixtures/references/test/reference/bwa/reference.fasta",
-    "fai": "/exports/sasc-testing/fixtures/references/test/reference/bwa/reference.fasta.fai",
-    "dict": "/exports/sasc-testing/fixtures/references/test/reference/bwa/reference.dict"
+    "fasta": "tests/data/reference/reference.fasta",
+    "fai": "tests/data/reference/reference.fasta.fai",
+    "dict": "tests/data/reference/reference.dict"
   }
 }
 
