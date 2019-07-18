@@ -41,15 +41,16 @@ workflow SVcalling {
     call FilterShortReadsBam {
         input:
             bamFile = bamFile,
-            outputPath = outputDir + '/filteredBam/' + sample + ".filtered.bam"
+            outputPathBam = outputDir + '/filteredBam/' + sample + ".filtered.bam"
     }
 
     call clever.Mateclever as mateclever {
         input:
-            bamFile = bamFile,
+            fiteredBamFile = FilterShortReadsBam.filteredBamOut,
+            indexedFiteredBamFile = FilterShortReadsBam.filteredBamOutIndexed,
             bwaIndex = bwaIndex,
             predictions = clever.predictions,
-            outputPath = outputDir + '/clever/'
+            outputPath = outputDir + '/mateclever/'
     }
 
     call manta.Germline as manta {
@@ -94,18 +95,26 @@ workflow SVcalling {
 task FilterShortReadsBam {
     input {
         IndexedBamFile bamFile
-        String outputPath
+        String outputPathBam
+        String dockerImage = "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
     }
 
     command <<<
         set -e
-        mkdir -p $(dirname ~{outputPath})
+        mkdir -p $(dirname ~{outputPathBam})
         samtools view -h ~{bamFile.file} | \
         awk 'length($10) > 30 || $1 ~/^@/' | \
-        samtools view -bS -> ~{outputPath}
+        samtools view -bS -> ~{outputPathBam} 
+        samtools index ~{outputPathBam}
+
     >>>
 
     output {
-        File filteredBamOut = outputPath
+        File filteredBamOut = outputPathBam
+        File filteredBamOutIndexed = outputPathBam+".bai"
+    }
+
+    runtime {
+        docker: dockerImage
     }
 }
