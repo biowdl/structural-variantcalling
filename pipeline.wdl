@@ -37,7 +37,13 @@ workflow SVcalling {
             bwaIndex = bwaIndex,
             outputPath = outputDir + '/clever/'
     } 
-   
+    
+    call FilterShortReadsBam {
+        input:
+            bamFile = bamFile,
+            outputPath = outputDir + '/filteredBam/' + sample + ".filtered.bam"
+    }
+
     call clever.Mateclever as mateclever {
         input:
             bamFile = bamFile,
@@ -82,4 +88,24 @@ workflow SVcalling {
         Array[File] renamedVcfs = renameSample.renamedVcf 
     }
     
+}
+
+
+task FilterShortReadsBam {
+    input {
+        IndexedBamFile bamFile
+        String outputPath
+    }
+
+    command <<<
+        set -e
+        mkdir -p $(dirname ~{outputPath})
+        samtools view -h ~{bamFile.file} | \
+        awk 'length($10) > 30 || $1 ~/^@/' | \
+        samtools view -bS -> ~{outputPath}
+    >>>
+
+    output {
+        File filteredBamOut = outputPath
+    }
 }
