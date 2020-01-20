@@ -13,7 +13,7 @@
         "tests/data/reference/bwa/reference.fasta.ann",
         "tests/data/reference/bwa/reference.fasta.bwt",
         "tests/data/reference/bwa/reference.fasta.pac"
-            ]
+    ]
   },
   "SVcalling.reference": {
     "fasta": "tests/data/reference/reference.fasta",
