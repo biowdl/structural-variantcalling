@@ -1,6 +1,5 @@
 {
   "SVcalling.sample": "sample-test",
-  "SVcalling.outputDir": "/exports/sascstudent/cedrick",
   "SVcalling.bamFile": {
     "file": "tests/data/ref_with_svs.bam",
     "index": "tests/data/ref_with_svs.bai"
