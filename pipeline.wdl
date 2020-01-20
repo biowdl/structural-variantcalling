@@ -15,7 +15,7 @@ workflow SVcalling {
         Reference reference
         BwaIndex bwaIndex
         String sample
-        String outputDir
+        String outputDir = "."
     }
      
     call delly.CallSV as delly {
