@@ -64,6 +64,7 @@ workflow SVcalling {
        input:
            bamFile = bamFile,
            referenceFasta = referenceFasta,
+           referenceFastaFai = referenceFastaFai,
            runDir = outputDir + '/manta/'
    }
 # 
