@@ -60,12 +60,12 @@ workflow SVcalling {
             outputPath = outputDir + '/mateclever/'
     }
 
-#    call manta.Germline as manta {
-#        input:
-#            normalBam = bamFile,
-#            reference = reference,
-#            runDir = outputDir + '/manta/'
-#    }
+   call manta.Germline as manta {
+       input:
+           bamFile = bamFile,
+           referenceFasta = referenceFasta,
+           runDir = outputDir + '/manta/'
+   }
 # 
 #    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
 #        (mateclever.matecleverVcf, "clever")]
