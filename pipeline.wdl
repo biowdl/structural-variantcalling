@@ -87,17 +87,17 @@ workflow SVcalling {
            outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
    }
    
-#    output {
-#        File cleverPredictions = clever.predictions
-#        File cleverVcf = mateclever.matecleverVcf
-#        IndexedVcfFile mantaVcf = manta.diploidSV
-#        File dellyBcf = delly.dellyBcf
-#        File dellyVcf = delly2vcf.OutputVcf
-#        File survivorVcf = survivor.mergedVcf 
-#        Array[File] renamedVcfs = renameSample.renamedVcf 
-#    }
-#    
-#   }
+   output {
+       File cleverPredictions = clever.predictions
+       File cleverVcf = mateclever.matecleverVcf
+       IndexedVcfFile mantaVcf = manta.diploidSV
+       File dellyBcf = delly.dellyBcf
+       File dellyVcf = delly2vcf.OutputVcf
+       File survivorVcf = survivor.mergedVcf 
+       Array[File] renamedVcfs = renameSample.renamedVcf 
+   }
+   
+  }
 }
 
 
