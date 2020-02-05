@@ -16,8 +16,6 @@ workflow SVcalling {
         File referenceFasta
         File referenceFastaFai
         File referenceFastaDict
-        #IndexedBamFile bamFile
-        #Reference reference
         BwaIndex bwaIndex
         String sample
         String outputDir = "."
@@ -55,8 +53,8 @@ workflow SVcalling {
 
     call clever.Mateclever as mateclever {
         input:
-            fiteredBamFile = FilterShortReadsBam.filteredBamOut,
-            indexedFiteredBamFile = FilterShortReadsBam.filteredBamOutIndexed,
+            fiteredBam = FilterShortReadsBam.filteredBamOut,
+            indexedFiteredBam = FilterShortReadsBam.filteredBamOutIndexed,
             bwaIndex = bwaIndex,
             predictions = clever.predictions,
             outputPath = outputDir + '/mateclever/'
