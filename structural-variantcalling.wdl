@@ -97,5 +97,15 @@ workflow SVcalling {
        File survivorVcf = survivor.mergedVcf 
        Array[File] renamedVcfs = renameSample.renamedVcf 
    }
-   
+
+   parameter_meta {
+       outputDir: {description: "The directory the output should be written to.", category: "common"}
+       referenceFasta: { description: "The reference fasta file", category: "required" }
+       referenceFastaFai: { description: "Fasta index (.fai) file of the reference", category: "required" }
+       referenceFastaDict: { description: "Sequence dictionary (.dict) file of the reference", category: "required" }
+       bamFile: {description: "sorted BAM file", category: "required"}
+       bamIndex: {description: "BAM index(.bai) file", category: "required"}
+       bwaIndex: {description: "Struct containing the BWA reference files", category: "required"}
+       sample: {description: "The name of the sample", category: "required"}
+   }
 }
