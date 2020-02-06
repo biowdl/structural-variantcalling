@@ -99,31 +99,3 @@ workflow SVcalling {
    }
    
 }
-
-
-# task FilterShortReadsBam {
-#     input {
-#         File bamFile
-#         String outputPathBam
-#         String dockerImage = "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
-#     }
-
-#     command <<<
-#         set -e
-#         mkdir -p $(dirname ~{outputPathBam})
-#         samtools view -h ~{bamFile} | \
-#         awk 'length($10) > 30 || $1 ~/^@/' | \
-#         samtools view -bS -> ~{outputPathBam} 
-#         samtools index ~{outputPathBam}
-
-#     >>>
-
-#     output {
-#         File filteredBam = outputPathBam
-#         File filteredBamIndex = outputPathBam+".bai"
-#     }
-
-#     runtime {
-#         docker: dockerImage
-#     }
-# }
