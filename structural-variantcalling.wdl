@@ -28,13 +28,13 @@ workflow SVcalling {
             bamIndex = bamIndex,
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
-            outputPath = outputDir + 'structural-variants/delly/' + sample + ".delly.bcf"
+            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.bcf"
     }   
 
     call bcftools.Bcf2Vcf as delly2vcf {
         input:
             bcf = delly.dellyBcf,
-            outputPath = outputDir + 'structural-variants/delly/' + sample + ".delly.vcf"
+            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf"
     } 
 
     call clever.Prediction as clever {
@@ -42,13 +42,13 @@ workflow SVcalling {
             bamFile = bamFile,
             bamIndex = bamIndex,
             bwaIndex = bwaIndex,
-            outputPath = outputDir + 'structural-variants/clever/'
+            outputPath = outputDir + '/structural-variants/clever/'
     } 
     
     call samtools.FilterShortReadsBam {
         input:
             bamFile = bamFile,
-            outputPathBam = outputDir + 'structural-variants/filteredBam/' + sample + ".filtered.bam"
+            outputPathBam = outputDir + '/structural-variants/filteredBam/' + sample + ".filtered.bam"
     }
 
     call clever.Mateclever as mateclever {
@@ -57,7 +57,7 @@ workflow SVcalling {
             indexedFiteredBam = FilterShortReadsBam.filteredBamIndex,
             bwaIndex = bwaIndex,
             predictions = clever.predictions,
-            outputPath = outputDir + 'structural-variants/mateclever/'
+            outputPath = outputDir + '/structural-variants/mateclever/'
     }
 
    call manta.Germline as manta {
@@ -66,7 +66,7 @@ workflow SVcalling {
            bamIndex = bamIndex,
            referenceFasta = referenceFasta,
            referenceFastaFai = referenceFastaFai,
-           runDir = outputDir + 'structural-variants/manta/'
+           runDir = outputDir + '/structural-variants/manta/'
    }
 
    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.mantaVCF,"manta"), 
@@ -76,7 +76,7 @@ workflow SVcalling {
        call picard.RenameSample as renameSample {
            input:
                inputVcf = pair.left,
-               outputPath = outputDir + 'structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
+               outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
                newSampleName = sample + "." + pair.right 
        }
    }
@@ -85,7 +85,7 @@ workflow SVcalling {
        input:
            filePaths = renameSample.renamedVcf,
            sample = sample,
-           outputPath = outputDir + 'structural-variants/survivor/' + sample + '.merged.vcf'
+           outputPath = outputDir + '/structural-variants/survivor/' + sample + '.merged.vcf'
    }
    
    output {
