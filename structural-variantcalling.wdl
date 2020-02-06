@@ -8,6 +8,7 @@ import "tasks/bcftools.wdl" as bcftools
 import "tasks/survivor.wdl" as survivor
 import "tasks/clever.wdl" as clever
 import "tasks/bwa.wdl" as bwa
+import "tasks/samtools.wdl" as samtools
 
 workflow SVcalling {
     input {
@@ -27,13 +28,13 @@ workflow SVcalling {
             bamIndex = bamIndex,
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
-            outputPath = outputDir + '/delly/' + sample + ".delly.bcf"
+            outputPath = outputDir + 'structural-variants/delly/' + sample + ".delly.bcf"
     }   
 
     call bcftools.Bcf2Vcf as delly2vcf {
         input:
             bcf = delly.dellyBcf,
-            outputPath = outputDir + '/delly/' + sample + ".delly.vcf"
+            outputPath = outputDir + 'structural-variants/delly/' + sample + ".delly.vcf"
     } 
 
     call clever.Prediction as clever {
@@ -41,13 +42,13 @@ workflow SVcalling {
             bamFile = bamFile,
             bamIndex = bamIndex,
             bwaIndex = bwaIndex,
-            outputPath = outputDir + '/clever/'
+            outputPath = outputDir + 'structural-variants/clever/'
     } 
     
-    call FilterShortReadsBam {
+    call samtools.FilterShortReadsBam {
         input:
             bamFile = bamFile,
-            outputPathBam = outputDir + '/filteredBam/' + sample + ".filtered.bam"
+            outputPathBam = outputDir + 'structural-variants/filteredBam/' + sample + ".filtered.bam"
     }
 
     call clever.Mateclever as mateclever {
@@ -56,7 +57,7 @@ workflow SVcalling {
             indexedFiteredBam = FilterShortReadsBam.filteredBamIndex,
             bwaIndex = bwaIndex,
             predictions = clever.predictions,
-            outputPath = outputDir + '/mateclever/'
+            outputPath = outputDir + 'structural-variants/mateclever/'
     }
 
    call manta.Germline as manta {
@@ -65,17 +66,17 @@ workflow SVcalling {
            bamIndex = bamIndex,
            referenceFasta = referenceFasta,
            referenceFastaFai = referenceFastaFai,
-           runDir = outputDir + '/manta/'
+           runDir = outputDir + 'structural-variants/manta/'
    }
 
-   Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.diploidSV.file,"manta"), 
+   Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.mantaVCF,"manta"), 
        (mateclever.matecleverVcf, "clever")]
 
    scatter (pair in vcfAndCaller){
        call picard.RenameSample as renameSample {
            input:
                inputVcf = pair.left,
-               outputPath = outputDir + '/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
+               outputPath = outputDir + 'structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
                newSampleName = sample + "." + pair.right 
        }
    }
@@ -84,46 +85,45 @@ workflow SVcalling {
        input:
            filePaths = renameSample.renamedVcf,
            sample = sample,
-           outputPath = outputDir + '/survivor/' + sample + '.merged.vcf'
+           outputPath = outputDir + 'structural-variants/survivor/' + sample + '.merged.vcf'
    }
    
    output {
        File cleverPredictions = clever.predictions
        File cleverVcf = mateclever.matecleverVcf
-       File mantaVcf = manta.diploidSV
+       File mantaVcf = manta.mantaVCF
        File dellyBcf = delly.dellyBcf
        File dellyVcf = delly2vcf.OutputVcf
        File survivorVcf = survivor.mergedVcf 
        Array[File] renamedVcfs = renameSample.renamedVcf 
    }
    
-  }
 }
 
 
-task FilterShortReadsBam {
-    input {
-        File bamFile
-        String outputPathBam
-        String dockerImage = "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
-    }
+# task FilterShortReadsBam {
+#     input {
+#         File bamFile
+#         String outputPathBam
+#         String dockerImage = "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
+#     }
 
-    command <<<
-        set -e
-        mkdir -p $(dirname ~{outputPathBam})
-        samtools view -h ~{bamFile} | \
-        awk 'length($10) > 30 || $1 ~/^@/' | \
-        samtools view -bS -> ~{outputPathBam} 
-        samtools index ~{outputPathBam}
+#     command <<<
+#         set -e
+#         mkdir -p $(dirname ~{outputPathBam})
+#         samtools view -h ~{bamFile} | \
+#         awk 'length($10) > 30 || $1 ~/^@/' | \
+#         samtools view -bS -> ~{outputPathBam} 
+#         samtools index ~{outputPathBam}
 
-    >>>
+#     >>>
 
-    output {
-        File filteredBam = outputPathBam
-        File filteredBamIndex = outputPathBam+".bai"
-    }
+#     output {
+#         File filteredBam = outputPathBam
+#         File filteredBamIndex = outputPathBam+".bai"
+#     }
 
-    runtime {
-        docker: dockerImage
-    }
-}
+#     runtime {
+#         docker: dockerImage
+#     }
+# }
