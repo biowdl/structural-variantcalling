@@ -1,4 +1,4 @@
-- name: sample
+- name: structural-variantcalling
   tags:
     - integration
   command: >-
