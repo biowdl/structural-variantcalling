@@ -17,13 +17,24 @@ workflow SVcalling {
         File referenceFasta
         File referenceFastaFai
         File referenceFastaDict
+        File dockerImagesFile
         BwaIndex bwaIndex
         String sample
         String outputDir = "."
     }
+
+    # Parse docker Tags configuration and sample sheet
+    call common.YamlToJson as ConvertDockerTagsFile {
+        input:
+            yaml = dockerImagesFile,
+            outputJson = outputDir + "/dockerImages.json"
+    }
+
+    Map[String, String] dockerImages = read_json(ConvertDockerTagsFile.json)
      
     call delly.CallSV as delly {
         input:
+            dockerImage = dockerImages["delly"],
             bamFile = bamFile,
             bamIndex = bamIndex,
             referenceFasta = referenceFasta,
@@ -33,12 +44,14 @@ workflow SVcalling {
 
     call bcftools.Bcf2Vcf as delly2vcf {
         input:
+            dockerImage = dockerImages["bcftools"],
             bcf = delly.dellyBcf,
             outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf"
     } 
 
     call clever.Prediction as clever {
         input:
+            dockerImage = dockerImages["clever"],
             bamFile = bamFile,
             bamIndex = bamIndex,
             bwaIndex = bwaIndex,
@@ -47,12 +60,14 @@ workflow SVcalling {
     
     call samtools.FilterShortReadsBam {
         input:
+            dockerImage = dockerImages["samtools"],
             bamFile = bamFile,
             outputPathBam = outputDir + '/structural-variants/filteredBam/' + sample + ".filtered.bam"
     }
 
     call clever.Mateclever as mateclever {
         input:
+            dockerImage = dockerImages["clever"],
             fiteredBam = FilterShortReadsBam.filteredBam,
             indexedFiteredBam = FilterShortReadsBam.filteredBamIndex,
             bwaIndex = bwaIndex,
@@ -62,11 +77,12 @@ workflow SVcalling {
 
    call manta.Germline as manta {
        input:
-           bamFile = bamFile,
-           bamIndex = bamIndex,
-           referenceFasta = referenceFasta,
-           referenceFastaFai = referenceFastaFai,
-           runDir = outputDir + '/structural-variants/manta/'
+            dockerImage = dockerImages["manta"],
+            bamFile = bamFile,
+            bamIndex = bamIndex,
+            referenceFasta = referenceFasta,
+            referenceFastaFai = referenceFastaFai,
+            runDir = outputDir + '/structural-variants/manta/'
    }
 
    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.mantaVCF,"manta"), 
@@ -75,17 +91,19 @@ workflow SVcalling {
    scatter (pair in vcfAndCaller){
        call picard.RenameSample as renameSample {
            input:
-               inputVcf = pair.left,
-               outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
-               newSampleName = sample + "." + pair.right 
+                dockerImage = dockerImages["picard"],
+                inputVcf = pair.left,
+                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
+                newSampleName = sample + "." + pair.right 
        }
    }
    
    call survivor.Merge as survivor {
        input:
-           filePaths = renameSample.renamedVcf,
-           sample = sample,
-           outputPath = outputDir + '/structural-variants/survivor/' + sample + '.merged.vcf'
+            dockerImage = dockerImages["survivor"],
+            filePaths = renameSample.renamedVcf,
+            sample = sample,
+            outputPath = outputDir + '/structural-variants/survivor/' + sample + '.merged.vcf'
    }
    
    output {
