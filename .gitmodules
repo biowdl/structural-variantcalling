@@ -3,4 +3,4 @@
 	url = https://github.com/biowdl/tasks.git
 [submodule "scripts"]
 	path = scripts
-	url = git@github.com:biowdl/scripts.git
+	url = https://github.com/biowdl/scripts.git
