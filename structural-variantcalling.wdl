@@ -85,7 +85,7 @@ workflow SVcalling {
             runDir = outputDir + '/structural-variants/manta/'
    }
 
-   Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.OutputVcf, "delly"),(manta.mantaVCF,"manta"), 
+   Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
        (mateclever.matecleverVcf, "clever")]
 
    scatter (pair in vcfAndCaller){
