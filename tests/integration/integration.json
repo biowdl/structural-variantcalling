@@ -1,0 +1,20 @@
+{
+  "SVcalling.bamIndex": "tests/data/ref_with_svs.bai",
+  "SVcalling.sample": "Sample",
+  "SVcalling.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "SVcalling.referenceFasta": "tests/data/reference/reference.fasta",
+  "SVcalling.bamFile": "tests/data/ref_with_svs.bam",
+  "SVcalling.referenceFastaDict": "tests/data/reference/reference.dict",
+  "SVcalling.bwaIndex": {
+    "fastaFile": "tests/data/reference/bwa/reference.fasta",
+    "indexFiles": [
+        "tests/data/reference/bwa/reference.fasta.sa",
+        "tests/data/reference/bwa/reference.fasta.amb",
+        "tests/data/reference/bwa/reference.fasta.ann",
+        "tests/data/reference/bwa/reference.fasta.bwt",
+        "tests/data/reference/bwa/reference.fasta.pac"
+    ]
+  },
+  "SVcalling.dockerImagesFile": "dockerImages.yml"
+}
+
