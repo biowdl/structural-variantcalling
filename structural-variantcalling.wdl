@@ -62,7 +62,8 @@ workflow SVcalling {
         input:
             dockerImage = dockerImages["samtools"],
             bamFile = bamFile,
-            outputPathBam = outputDir + '/structural-variants/filteredBam/' + sample + ".filtered.bam"
+            outputPathBam = outputDir + '/structural-variants/filteredBam/' + sample + ".filtered.bam",
+            outputPathBamIndex = outputDir + '/structural-variants/filteredBam/' + sample + ".filtered.bai"
     }
 
     call clever.Mateclever as mateclever {
@@ -111,7 +112,7 @@ workflow SVcalling {
        File cleverVcf = mateclever.matecleverVcf
        File mantaVcf = manta.mantaVCF
        File dellyBcf = delly.dellyBcf
-       File dellyVcf = delly2vcf.OutputVcf
+       File dellyVcf = delly2vcf.outputVcf
        File survivorVcf = survivor.mergedVcf 
        Array[File] renamedVcfs = renameSample.renamedVcf 
    }
