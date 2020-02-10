@@ -133,6 +133,7 @@ workflow SVcalling {
         javaXmx: {description: "The max. memory allocated for JAVA", category: "common"}
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
+                           
         minSize: {description: "The mimimum size of SV to be merged", category: "required"}
         distanceBySvSize: {description: "A boolean to predict the pairwise distance between the SVs based on their size", category: "required"}
         strandType: {description: "A boolean to include strand type of an SV to be merged", category: "required"}
