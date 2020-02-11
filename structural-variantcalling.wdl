@@ -131,7 +131,6 @@ workflow SVcalling {
         cores: {description: "The the number of cores required to run a program", category: "common"}
         threads: {description: "The the number of threads required to run a program", category: "common"}
         javaXmx: {description: "The max. memory allocated for JAVA", category: "common"}
-
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
                            
