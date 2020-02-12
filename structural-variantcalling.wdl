@@ -62,8 +62,7 @@ workflow SVcalling {
         input:
             dockerImage = dockerImages["samtools"],
             bamFile = bamFile,
-            outputPathBam = outputDir + '/structural-variants/filteredBam/' + sample + ".filtered.bam",
-            outputPathBamIndex = outputDir + '/structural-variants/filteredBam/' + sample + ".filtered.bai"
+            outputPathBam = outputDir + '/structural-variants/filteredBam/' + sample + ".filtered.bam"
     }
 
     call clever.Mateclever as mateclever {
