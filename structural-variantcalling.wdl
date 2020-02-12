@@ -103,7 +103,6 @@ workflow SVcalling {
        input:
             dockerImage = dockerImages["survivor"],
             filePaths = renameSample.renamedVcf,
-            sample = sample,
             outputPath = outputDir + '/structural-variants/survivor/' + sample + '.merged.vcf'
    }
    
