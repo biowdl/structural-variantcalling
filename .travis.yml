@@ -38,10 +38,7 @@ after_failure:
 
 matrix:
   include:
-    - env: TEST=single_sample
-    - env: TEST=two_sample
-    - env: TEST=two_sample_gender_aware
-    - env: TEST=two_sample_gender_aware_with_regions
+    - env: TEST=integration
     - env: TEST="Womtool validate and submodule up to date"
       stage: lint
       install:
