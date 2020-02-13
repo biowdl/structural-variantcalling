@@ -5,10 +5,10 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/structural-variantcalling.json structural-variantcalling.wdl
   files:
-    - path: "test-output/delly/sample.delly.bcf"
-    - path: "test-output/delly/sample.delly.vcf"
-    - path: "test-output/clever/predictions.vcf"
-    - path: "test-output/mateclever/deletions.vcf"
-    - path: "test-output/manta/results/variants/diploidSV.vcf.gz"
-    - path: "test-output/survivor/sample.merged.vcf"
+    - path: "test-output/structural-variants/delly/sample.delly.bcf"
+    - path: "test-output/structural-variants/delly/sample.delly.vcf"
+    - path: "test-output/structural-variants/clever/predictions.vcf"
+    - path: "test-output/structural-variants/mateclever/deletions.vcf"
+    - path: "test-output/structural-variants/manta/results/variants/diploidSV.vcf.gz"
+    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
 
