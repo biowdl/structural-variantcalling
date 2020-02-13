@@ -38,7 +38,7 @@ after_failure:
 
 matrix:
   include:
-    - env: TEST=integration
+    - env: TEST=structural-variantcalling
     - env: TEST="Womtool validate and submodule up to date"
       stage: lint
       install:
