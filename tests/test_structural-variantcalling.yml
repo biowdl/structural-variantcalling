@@ -3,7 +3,7 @@
     - integration
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/structural-variantcalling.json structural-variantcalling.wdl
+    -i tests/integration/integration.json structural-variantcalling.wdl
   files:
     - path: "test-output/structural-variants/delly/sample.delly.bcf"
     - path: "test-output/structural-variants/delly/sample.delly.vcf"
