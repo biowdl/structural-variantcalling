@@ -39,10 +39,10 @@ workflow SVcalling {
         File referenceFasta
         File referenceFastaFai
         File referenceFastaDict
-        File dockerImagesFile
         BwaIndex bwaIndex
         String sample
         String outputDir = "."
+        File dockerImagesFile
     }
 
     # Parse docker Tags configuration and sample sheet
