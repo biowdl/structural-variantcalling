@@ -22,15 +22,15 @@ version 1.0
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import "tasks/bcftools.wdl" as bcftools
+import "tasks/bwa.wdl" as bwa
+import "tasks/clever.wdl" as clever
 import "tasks/common.wdl" as common
 import "tasks/delly.wdl" as delly
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
-import "tasks/bcftools.wdl" as bcftools
-import "tasks/survivor.wdl" as survivor
-import "tasks/clever.wdl" as clever
-import "tasks/bwa.wdl" as bwa
 import "tasks/samtools.wdl" as samtools
+import "tasks/survivor.wdl" as survivor
 
 workflow SVcalling {
     input {
