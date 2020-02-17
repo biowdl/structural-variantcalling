@@ -147,6 +147,6 @@ workflow SVcalling {
         bwaIndex: {description: "Struct containing the BWA reference files", category: "required"}
         sample: {description: "The name of the sample", category: "required"}
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
-                           category: "advanced"}
+                           category: "required"}
    }
 }
