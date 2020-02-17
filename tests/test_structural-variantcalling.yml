@@ -1,6 +1,6 @@
 - name: structural-variantcalling
   tags:
-    - integration
+    - no_docker_conf
   command: >-
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/integration.json structural-variantcalling.wdl
