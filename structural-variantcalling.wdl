@@ -146,19 +146,7 @@ workflow SVcalling {
         bamIndex: {description: "BAM index(.bai) file", category: "required"}
         bwaIndex: {description: "Struct containing the BWA reference files", category: "required"}
         sample: {description: "The name of the sample", category: "required"}
-        memory: {description: "The memory required to run the programs", category: "common"}
-        memoryGb: {description: "The memory required to run the manta", category: "common"}
-        cores: {description: "The the number of cores required to run a program", category: "common"}
-        threads: {description: "The the number of threads required to run a program", category: "common"}
-        javaXmx: {description: "The max. memory allocated for JAVA", category: "common"}
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
-                           
-        minSize: {description: "The mimimum size of SV to be merged", category: "required"}
-        distanceBySvSize: {description: "A boolean to predict the pairwise distance between the SVs based on their size", category: "required"}
-        strandType: {description: "A boolean to include strand type of an SV to be merged", category: "required"}
-        svType: {description: "A boolean to include the type SV to be merged", category: "required"}
-        suppVecs: {description: "The minimum number of SV callers to support the merging", category: "required"}
-        breakpointDistance: {description: "The distance between pairwise breakpoints between SVs", category: "required"}
    }
 }
