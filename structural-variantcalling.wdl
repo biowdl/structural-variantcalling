@@ -43,13 +43,13 @@ workflow SVcalling {
         String sample
         String outputDir = "."
         Map[String, String] dockerImages = {
-        "bcftools": "quay.io/biocontainers/bcftools:1.9--ha228f0b_3",
-        "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6",
-        "delly": "quay.io/biocontainers/delly:0.8.1--h4037b6b_1",
-        "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
-        "picard": "quay.io/biocontainers/picard:2.19.0--0",
-        "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5",
-        "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0"
+            "bcftools": "quay.io/biocontainers/bcftools:1.9--ha228f0b_3",
+            "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6",
+            "delly": "quay.io/biocontainers/delly:0.8.1--h4037b6b_1",
+            "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
+            "picard": "quay.io/biocontainers/picard:2.19.0--0",
+            "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5",
+            "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0"
         }
     }
 
