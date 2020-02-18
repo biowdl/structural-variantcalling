@@ -14,7 +14,6 @@
         "tests/data/reference/bwa/reference.fasta.bwt",
         "tests/data/reference/bwa/reference.fasta.pac"
     ]
-  },
-  "SVcalling.dockerImagesFile": "dockerImages.yml"
+  }
 }
 
