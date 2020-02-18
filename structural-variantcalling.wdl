@@ -145,7 +145,7 @@ workflow SVcalling {
         bamIndex: {description: "BAM index(.bai) file", category: "required"}
         bwaIndex: {description: "Struct containing the BWA reference files", category: "required"}
         sample: {description: "The name of the sample", category: "required"}
-        dockerImages: {description: "A map describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
+        dockerImages: {description: "A map describing the docker image used for the tasks.",
                            category: "advanced"}
    }
 }
