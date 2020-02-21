@@ -21,7 +21,7 @@ described below, but additional inputs are available.
 A template containing all possible inputs can be generated using
 Womtool as described in the
 [WOMtool documentation](https://cromwell.readthedocs.io/en/stable/WOMtool/).
-For overviews of all available inputs, see [this page](https://github.com/biowdl/structural-variantcalling/blob/develop/docs/inputs.md)
+For overviews of all available inputs, see [this page](./inputs.html)
 
 ```json
 {
