@@ -20,7 +20,8 @@ Inputs are provided through a JSON file. The minimally required inputs are
 described below, but additional inputs are available.
 A template containing all possible inputs can be generated using
 Womtool as described in the
-[WOMtool documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
+[WOMtool documentation](https://cromwell.readthedocs.io/en/stable/WOMtool/).
+For overviews of all available inputs, see [this page](https://github.com/biowdl/structural-variantcalling/blob/develop/docs/inputs.md)
 
 ```json
 {
@@ -79,7 +80,7 @@ This pipeline produces VCF files from Delly, Manta, and Mateclever, as well as t
   <!-- Obscure e-mail address for spammers -->
 For any questions about running this pipeline and feature request (such as
 adding additional tools and options), please use the
-<a href='https://github.com/biowdl/pipeline-template/issues'>github issue tracker</a>
+<a href='https://github.com/biowdl/structural-variantcalling/issues'>github issue tracker</a>
 or contact the SASC team directly at: 
 <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
 &#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;</a>.
