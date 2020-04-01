@@ -1,4 +1,5 @@
 remote_theme: biowdl/biowdl-docs-theme
 title: "BioWDL: structural-variantcalling"
+logo: /assets/img/logo.png
 latest: v1.0.0
 zenodo: 175198867
