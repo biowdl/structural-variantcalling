@@ -1,3 +1,4 @@
-remote_theme: biowdl/minimal
+remote_theme: biowdl/biowdl-docs-theme
 title: "BioWDL: structural-variantcalling"
 latest: v1.0.0
+zenodo: 175198867
