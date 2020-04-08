@@ -30,6 +30,7 @@ import "tasks/delly.wdl" as delly
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
+import "tasks/smoove.wdl" as smoove
 import "tasks/survivor.wdl" as survivor
 
 workflow SVcalling {
@@ -49,9 +50,21 @@ workflow SVcalling {
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "picard": "quay.io/biocontainers/picard:2.19.0--0",
             "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5",
-            "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0"
+            "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0",
+            "smoove": "quay.io/biocontainers/smoove:0.2.5--0"
         }
     }
+
+    call smoove.Call as smoove {
+        input:
+            dockerImage = dockerImages["smoove"],
+            bamFile = bamFile,
+            bamIndex = bamIndex,
+            referenceFasta = referenceFasta,
+            referenceFastaFai = referenceFastaFai,
+            sample = sample,
+            outputDir = outputDir + '/structural-variants/smoove'
+    }   
 
     call delly.CallSV as delly {
         input:
@@ -107,7 +120,7 @@ workflow SVcalling {
    }
 
    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
-       (mateclever.matecleverVcf, "clever")]
+       (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
 
    scatter (pair in vcfAndCaller){
        call picard.RenameSample as renameSample {
@@ -133,6 +146,7 @@ workflow SVcalling {
         File dellyBcf = delly.dellyBcf
         File dellyVcf = delly2vcf.outputVcf
         File survivorVcf = survivor.mergedVcf
+        File smooveVcf = smoove.smooveVcf
         Array[File] renamedVcfs = renameSample.renamedVcf 
    }
 
