@@ -3,7 +3,7 @@ layout: default
 title: Structural-Variantcalling
 ---
 
-This pipeline merges the SV predictions from Delly, Manta, and Mateclever using SURVIVOR merge. 
+This pipeline merges the SV predictions from Delly, Manta, Mateclever, and Smoove using SURVIVOR merge. 
 
 This pipeline is part of [BioWDL](https://biowdl.github.io/)
 developed by the SASC team at [Leiden University Medical Center](https://www.lumc.nl/).
