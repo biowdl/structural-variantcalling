@@ -54,6 +54,7 @@ workflow SVcalling {
             "smoove": "quay.io/biocontainers/smoove:0.2.5--0"
         }
     }
+    meta {allowNestedInputs: true}
 
     call smoove.Call as smoove {
         input:
