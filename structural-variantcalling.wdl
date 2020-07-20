@@ -44,12 +44,12 @@ workflow SVcalling {
         String sample
         String outputDir = "."
         Map[String, String] dockerImages = {
-            "bcftools": "quay.io/biocontainers/bcftools:1.9--ha228f0b_3",
+            "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
             "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6",
             "delly": "quay.io/biocontainers/delly:0.8.1--h4037b6b_1",
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
-            "picard": "quay.io/biocontainers/picard:2.19.0--0",
-            "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5",
+            "picard":"quay.io/biocontainers/picard:2.23.2--0",
+            "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2",
             "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0",
             "smoove": "quay.io/biocontainers/smoove:0.2.5--0"
         }
@@ -77,11 +77,11 @@ workflow SVcalling {
             outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.bcf"
     }   
 
-    call bcftools.Bcf2Vcf as delly2vcf {
+    call bcftools.View as delly2vcf {
         input:
             dockerImage = dockerImages["bcftools"],
-            bcf = delly.dellyBcf,
-            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf"
+            inputFile = delly.dellyBcf,
+            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf.gz"
     } 
 
     call clever.Prediction as clever {
@@ -146,6 +146,7 @@ workflow SVcalling {
         File mantaVcf = manta.mantaVCF
         File dellyBcf = delly.dellyBcf
         File dellyVcf = delly2vcf.outputVcf
+        File dellyVcfIndex = delly2vcf.outputVcfIndex
         File survivorVcf = survivor.mergedVcf
         File smooveVcf = smoove.smooveVcf
         Array[File] renamedVcfs = renameSample.renamedVcf 
