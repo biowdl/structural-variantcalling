@@ -27,6 +27,7 @@ import "tasks/bwa.wdl" as bwa
 import "tasks/clever.wdl" as clever
 import "tasks/common.wdl" as common
 import "tasks/delly.wdl" as delly
+import "tasks/gridss.wdl" as gridss
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
@@ -47,6 +48,7 @@ workflow SVcalling {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
             "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6",
             "delly": "quay.io/biocontainers/delly:0.8.1--h4037b6b_1",
+            "gridss": "quay.io/biocontainers/gridss:2.9.4--0",
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "picard":"quay.io/biocontainers/picard:2.23.2--0",
             "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2",
@@ -110,15 +112,25 @@ workflow SVcalling {
             outputPath = outputDir + '/structural-variants/mateclever/'
     }
 
-   call manta.Germline as manta {
-       input:
+    call manta.Germline as manta {
+        input:
             dockerImage = dockerImages["manta"],
             bamFile = bamFile,
             bamIndex = bamIndex,
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
             runDir = outputDir + '/structural-variants/manta/'
-   }
+    }
+
+    call gridss.GRIDSS as gridss {
+        input:
+            tumorBam = bamFile,
+            tumorBai = bamIndex,
+            tumorLabel = "gridss",
+            reference = bwaIndex,
+            outputPrefix = outputDir + '/structural-variants/GRIDSS/' + sample,
+            dockerImage = dockerImages["gridss"]
+    }
 
    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
        (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
@@ -136,7 +148,7 @@ workflow SVcalling {
    call survivor.Merge as survivor {
        input:
             dockerImage = dockerImages["survivor"],
-            filePaths = renameSample.renamedVcf,
+            filePaths = flatten([renameSample.renamedVcf, [gridss.vcf]]),
             outputPath = outputDir + '/structural-variants/survivor/' + sample + '.merged.vcf'
    }
    
@@ -147,6 +159,8 @@ workflow SVcalling {
         File dellyBcf = delly.dellyBcf
         File dellyVcf = delly2vcf.outputVcf
         File dellyVcfIndex = delly2vcf.outputVcfIndex
+        File gridssVcf = gridss.vcf
+        File gridssVcfIndex = gridss.vcfIndex
         File survivorVcf = survivor.mergedVcf
         File smooveVcf = smoove.smooveVcf
         Array[File] renamedVcfs = renameSample.renamedVcf 
