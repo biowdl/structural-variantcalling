@@ -126,14 +126,14 @@ workflow SVcalling {
         input:
             tumorBam = bamFile,
             tumorBai = bamIndex,
-            tumorLabel = "gridss",
+            tumorLabel = sample,
             reference = bwaIndex,
             outputPrefix = outputDir + '/structural-variants/GRIDSS/' + sample,
             dockerImage = dockerImages["gridss"]
     }
 
    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
-       (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
+       (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove"), (gridss.vcf, "gridss")]
 
    scatter (pair in vcfAndCaller){
        call picard.RenameSample as renameSample {
@@ -148,7 +148,7 @@ workflow SVcalling {
    call survivor.Merge as survivor {
        input:
             dockerImage = dockerImages["survivor"],
-            filePaths = flatten([renameSample.renamedVcf, [gridss.vcf]]),
+            filePaths = renameSample.renamedVcf,
             outputPath = outputDir + '/structural-variants/survivor/' + sample + '.merged.vcf'
    }
    

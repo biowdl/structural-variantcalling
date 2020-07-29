@@ -12,7 +12,8 @@
         "tests/data/reference/bwa/reference.fasta.amb",
         "tests/data/reference/bwa/reference.fasta.ann",
         "tests/data/reference/bwa/reference.fasta.bwt",
-        "tests/data/reference/bwa/reference.fasta.pac"
+        "tests/data/reference/bwa/reference.fasta.pac",
+        "tests/data/reference/bwa/reference.fasta.fai"
     ]
   }
 }
