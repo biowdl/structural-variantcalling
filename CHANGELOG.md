@@ -11,6 +11,7 @@ that users understand how the changes affect the new version.
 
 version 1.1.0-develop
 ---------------------
++ Added GRIDSS sv caller
 + Bcftools samtools and picard images are updated to newer versions.
 + Bcftools view now converts delly vcf to a gzipped version.
 + Tasks were updated to contain the `time_minutes` runtime attribute and
