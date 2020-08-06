@@ -88,7 +88,7 @@ SVcalling.
 <dl>
 <dt id="SVcalling.clever.memory"><a href="#SVcalling.clever.memory">SVcalling.clever.memory</a></dt>
 <dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"15G"</code><br />
+    <i>String </i><i>&mdash; Default:</i> <code>"55G"</code><br />
     The memory required to run the programs
 </dd>
 <dt id="SVcalling.clever.threads"><a href="#SVcalling.clever.threads">SVcalling.clever.threads</a></dt>
@@ -96,15 +96,55 @@ SVcalling.
     <i>Int </i><i>&mdash; Default:</i> <code>10</code><br />
     The the number of threads required to run a program
 </dd>
+<dt id="SVcalling.clever.timeMinutes"><a href="#SVcalling.clever.timeMinutes">SVcalling.clever.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>480</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
 <dt id="SVcalling.delly.memory"><a href="#SVcalling.delly.memory">SVcalling.delly.memory</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"15G"</code><br />
     The memory required to run the programs
 </dd>
+<dt id="SVcalling.delly.timeMinutes"><a href="#SVcalling.delly.timeMinutes">SVcalling.delly.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>300</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="SVcalling.delly2vcf.compressionLevel"><a href="#SVcalling.delly2vcf.compressionLevel">SVcalling.delly2vcf.compressionLevel</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
+    Compression level from 0 (uncompressed) to 9 (best).
+</dd>
+<dt id="SVcalling.delly2vcf.memory"><a href="#SVcalling.delly2vcf.memory">SVcalling.delly2vcf.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"256M"</code><br />
+    The amount of memory this job will use.
+</dd>
+<dt id="SVcalling.delly2vcf.timeMinutes"><a href="#SVcalling.delly2vcf.timeMinutes">SVcalling.delly2vcf.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
 <dt id="SVcalling.dockerImages"><a href="#SVcalling.dockerImages">SVcalling.dockerImages</a></dt>
 <dd>
-    <i>Map[String,String] </i><i>&mdash; Default:</i> <code>{"bcftools": "quay.io/biocontainers/bcftools:1.9--ha228f0b_3", "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6", "delly": "quay.io/biocontainers/delly:0.8.1--h4037b6b_1", "manta": "quay.io/biocontainers/manta:1.4.0--py27_1", "picard": "quay.io/biocontainers/picard:2.19.0--0", "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5", "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0"}</code><br />
+    <i>Map[String,String] </i><i>&mdash; Default:</i> <code>{"bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2", "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6", "delly": "quay.io/biocontainers/delly:0.8.1--h4037b6b_1", "manta": "quay.io/biocontainers/manta:1.4.0--py27_1", "picard": "quay.io/biocontainers/picard:2.23.2--0", "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2", "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0", "smoove": "quay.io/biocontainers/smoove:0.2.5--0"}</code><br />
     A map describing the docker image used for the tasks.
+</dd>
+<dt id="SVcalling.FilterShortReadsBam.memory"><a href="#SVcalling.FilterShortReadsBam.memory">SVcalling.FilterShortReadsBam.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"1G"</code><br />
+    The amount of memory this job will use.
+</dd>
+<dt id="SVcalling.FilterShortReadsBam.timeMinutes"><a href="#SVcalling.FilterShortReadsBam.timeMinutes">SVcalling.FilterShortReadsBam.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil((size(bamFile,"G") * 8))</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="SVcalling.manta.timeMinutes"><a href="#SVcalling.manta.timeMinutes">SVcalling.manta.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>60</code><br />
+    The maximum amount of time the job will run in minutes.
 </dd>
 <dt id="SVcalling.mateclever.cleverMaxDelLength"><a href="#SVcalling.mateclever.cleverMaxDelLength">SVcalling.mateclever.cleverMaxDelLength</a></dt>
 <dd>
@@ -131,6 +171,11 @@ SVcalling.
     <i>Int </i><i>&mdash; Default:</i> <code>10</code><br />
     The the number of threads required to run a program
 </dd>
+<dt id="SVcalling.mateclever.timeMinutes"><a href="#SVcalling.mateclever.timeMinutes">SVcalling.mateclever.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>600</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
 <dt id="SVcalling.renameSample.javaXmx"><a href="#SVcalling.renameSample.javaXmx">SVcalling.renameSample.javaXmx</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"8G"</code><br />
@@ -138,8 +183,23 @@ SVcalling.
 </dd>
 <dt id="SVcalling.renameSample.memory"><a href="#SVcalling.renameSample.memory">SVcalling.renameSample.memory</a></dt>
 <dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"24G"</code><br />
+    <i>String </i><i>&mdash; Default:</i> <code>"9G"</code><br />
     The memory required to run the programs
+</dd>
+<dt id="SVcalling.renameSample.timeMinutes"><a href="#SVcalling.renameSample.timeMinutes">SVcalling.renameSample.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil((size(inputVcf,"G") * 2))</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="SVcalling.smoove.memory"><a href="#SVcalling.smoove.memory">SVcalling.smoove.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"15G"</code><br />
+    The memory required to run the programs.
+</dd>
+<dt id="SVcalling.smoove.timeMinutes"><a href="#SVcalling.smoove.timeMinutes">SVcalling.smoove.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1440</code><br />
+    The maximum duration (in minutes) the tool is allowed to run.
 </dd>
 <dt id="SVcalling.survivor.breakpointDistance"><a href="#SVcalling.survivor.breakpointDistance">SVcalling.survivor.breakpointDistance</a></dt>
 <dd>
@@ -176,9 +236,26 @@ SVcalling.
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
     A boolean to include the type SV to be merged
 </dd>
+<dt id="SVcalling.survivor.timeMinutes"><a href="#SVcalling.survivor.timeMinutes">SVcalling.survivor.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>60</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
 </dl>
 </details>
 
 
+
+## Other inputs
+<details>
+<summary> Show/Hide </summary>
+<dl>
+<dt id="SVcalling.delly2vcf.outputType"><a href="#SVcalling.delly2vcf.outputType">SVcalling.delly2vcf.outputType</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"z"</code><br />
+    Output type: v=vcf, z=vcf.gz, b=bcf, u=uncompressed bcf
+</dd>
+</dl>
+</details>
 
 
