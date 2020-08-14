@@ -13,4 +13,5 @@
     - path: "test-output/structural-variants/mateclever/deletions.vcf"
     - path: "test-output/structural-variants/manta/results/variants/diploidSV.vcf.gz"
     - path: "test-output/structural-variants/survivor/sample.merged.vcf"
-
+    - path: "test-output/structural-variants/GRIDSS/sample.vcf.gz"
+    - path: "test-output/structural-variants/GRIDSS/sample.vcf.gz.tbi"

@@ -34,6 +34,7 @@ script:
 after_failure:
   # Get the last 1000 lines of the cromwell log to catch the error.
   - bash -c 'tail -n 1000 /tmp/pytest_workflow_*/*/log.out'
+  - bash -c 'for file in $(find /tmp/pytest_workflow_* -name stderr); do echo $file; cat $file; done'
 
 
 matrix:
