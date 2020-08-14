@@ -181,7 +181,7 @@ workflow SVcalling {
         File survivorVcf = survivor.mergedVcf
         File smooveVcf = smoove.smooveVcf
         Array[File] modifiedVcfs = setId.outputVcf
-        Array[File] modifiedVcfs = setId.outputVcfIndex
+        Array[File] modifiedVcfIndices = setId.outputVcfIndex
    }
 
    parameter_meta {
