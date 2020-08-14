@@ -180,7 +180,7 @@ workflow SVcalling {
         File gridssVcfIndex = gridss.vcfIndex
         File survivorVcf = survivor.mergedVcf
         File smooveVcf = smoove.smooveVcf
-        Array[File] modifiedVcfs = sort.outputVcf 
+        Array[File] modifiedVcfs = setId.outputVcf 
    }
 
    parameter_meta {
