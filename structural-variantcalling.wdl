@@ -43,6 +43,7 @@ workflow SVcalling {
         File referenceFastaDict
         BwaIndex bwaIndex
         String sample
+        String newId = "\'%CHROM\\_%POS\'"
         String outputDir = "."
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
@@ -140,15 +141,31 @@ workflow SVcalling {
            input:
                 dockerImage = dockerImages["picard"],
                 inputVcf = pair.left,
-                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.vcf',
+                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.sample_renamed.vcf',
                 newSampleName = sample + "." + pair.right 
        }
+       
+       call bcftools.Sort as sort {
+           input:
+                dockerImage = dockerImages["bcftools"],
+                inputFile = renameSample.renamedVcf,
+                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.sorted.sample_renamed.vcf.gz',
+       }
+
+       call bcftools.Annotate as setId {
+           input:
+                dockerImage = dockerImages["bcftools"],
+                inputFile = sort.outputVcf,
+                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.changed_id.sorted.sample_renamed.vcf.gz',
+                newId = newId
+       }
+
    }
    
    call survivor.Merge as survivor {
        input:
             dockerImage = dockerImages["survivor"],
-            filePaths = renameSample.renamedVcf,
+            filePaths = setId.outputVcf,
             outputPath = outputDir + '/structural-variants/survivor/' + sample + '.merged.vcf'
    }
    
@@ -163,7 +180,8 @@ workflow SVcalling {
         File gridssVcfIndex = gridss.vcfIndex
         File survivorVcf = survivor.mergedVcf
         File smooveVcf = smoove.smooveVcf
-        Array[File] renamedVcfs = renameSample.renamedVcf 
+        Array[File] modifiedVcfs = setId.outputVcf
+        Array[File] modifiedVcfIndices = setId.outputVcfIndex
    }
 
    parameter_meta {
@@ -175,6 +193,7 @@ workflow SVcalling {
         bamIndex: {description: "BAM index(.bai) file", category: "required"}
         bwaIndex: {description: "Struct containing the BWA reference files", category: "required"}
         sample: {description: "The name of the sample", category: "required"}
+        newId: {description: "Assign ID on the fly (e.g. --set-id +'%CHROM\_%POS').", category: "advanced"}
         dockerImages: {description: "A map describing the docker image used for the tasks.",
                            category: "advanced"}
    }
