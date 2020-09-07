@@ -45,6 +45,7 @@ workflow SVcalling {
         String sample
         String newId = "\'%CHROM\\_%POS\'"
         String outputDir = "."
+        Boolean compression = true
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
             "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6",
@@ -84,8 +85,8 @@ workflow SVcalling {
         input:
             dockerImage = dockerImages["bcftools"],
             inputFile = delly.dellyBcf,
-            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf.gz",
-            compressionLevel = 1
+            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf"
+
     } 
 
     call clever.Prediction as clever {
@@ -150,8 +151,7 @@ workflow SVcalling {
            input:
                 dockerImage = dockerImages["bcftools"],
                 inputFile = renameSample.renamedVcf,
-                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.sorted.sample_renamed.vcf.gz',
-                outputType = "z"
+                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.sorted.sample_renamed.vcf.gz'
        }
 
        call bcftools.Annotate as setId {
@@ -159,8 +159,7 @@ workflow SVcalling {
                 dockerImage = dockerImages["bcftools"],
                 inputFile = sort.outputVcf,
                 outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.changed_id.sorted.sample_renamed.vcf.gz',
-                newId = newId,
-                outputType = "z"
+                newId = newId
        }
 
    }
