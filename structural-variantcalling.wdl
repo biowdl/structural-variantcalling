@@ -45,7 +45,6 @@ workflow SVcalling {
         String sample
         String newId = "\'%CHROM\\_%POS\'"
         String outputDir = "."
-        Boolean compression = true
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
             "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6",
