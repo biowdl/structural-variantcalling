@@ -85,7 +85,6 @@ workflow SVcalling {
             dockerImage = dockerImages["bcftools"],
             inputFile = delly.dellyBcf,
             outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf"
-
     } 
 
     call clever.Prediction as clever {
