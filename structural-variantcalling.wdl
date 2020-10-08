@@ -84,7 +84,7 @@ workflow SVcalling {
         input:
             dockerImage = dockerImages["bcftools"],
             inputFile = delly.dellyBcf,
-            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf.gz"
+            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf"
     } 
 
     call clever.Prediction as clever {
@@ -149,7 +149,7 @@ workflow SVcalling {
            input:
                 dockerImage = dockerImages["bcftools"],
                 inputFile = renameSample.renamedVcf,
-                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.sorted.sample_renamed.vcf.gz',
+                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.sorted.sample_renamed.vcf.gz'
        }
 
        call bcftools.Annotate as setId {
@@ -175,13 +175,13 @@ workflow SVcalling {
         File mantaVcf = manta.mantaVCF
         File dellyBcf = delly.dellyBcf
         File dellyVcf = delly2vcf.outputVcf
-        File dellyVcfIndex = delly2vcf.outputVcfIndex
+        File? dellyVcfIndex = delly2vcf.outputVcfIndex
         File gridssVcf = gridss.vcf
         File gridssVcfIndex = gridss.vcfIndex
         File survivorVcf = survivor.mergedVcf
         File smooveVcf = smoove.smooveVcf
         Array[File] modifiedVcfs = setId.outputVcf
-        Array[File] modifiedVcfIndices = setId.outputVcfIndex
+        Array[File?] modifiedVcfIndices = setId.outputVcfIndex
    }
 
    parameter_meta {

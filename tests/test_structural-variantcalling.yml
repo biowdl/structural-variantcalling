@@ -6,12 +6,9 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/integration.json structural-variantcalling.wdl
   files:
-    - path: "test-output/structural-variants/delly/sample.delly.bcf"
-    - path: "test-output/structural-variants/delly/sample.delly.vcf.gz"
-    - path: "test-output/structural-variants/delly/sample.delly.vcf.gz.tbi"
-    - path: "test-output/structural-variants/clever/predictions.vcf"
+    - path: "test-output/structural-variants/delly/sample.delly.vcf"
     - path: "test-output/structural-variants/mateclever/deletions.vcf"
     - path: "test-output/structural-variants/manta/results/variants/diploidSV.vcf.gz"
     - path: "test-output/structural-variants/survivor/sample.merged.vcf"
     - path: "test-output/structural-variants/GRIDSS/sample.vcf.gz"
-    - path: "test-output/structural-variants/GRIDSS/sample.vcf.gz.tbi"
+    - path: "test-output/structural-variants/smoove/sample-smoove.vcf.gz"
