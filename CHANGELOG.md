@@ -11,7 +11,6 @@ that users understand how the changes affect the new version.
 
 version 1.2.0-develop
 ---------------------
-+ Make bcftools indexing optional
 + Structural-variantcalling pipeline: add sorting and change id
 + Added GRIDSS sv caller
 
