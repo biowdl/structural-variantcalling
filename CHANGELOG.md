@@ -11,6 +11,7 @@ that users understand how the changes affect the new version.
 
 version 1.2.0-develop
 ---------------------
++ Specify tempdir for BCFtools sorting.
 + Exclude GRIDSS from merging.
 + Update Delly docker image
 + Make bcftools indexing optional
