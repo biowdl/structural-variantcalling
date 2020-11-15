@@ -48,7 +48,7 @@ workflow SVcalling {
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
             "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6",
-            "delly": "quay.io/biocontainers/delly:0.8.1--h4037b6b_1",
+            "delly": "quay.io/biocontainers/delly:0.8.5--hf3ca161_0",
             "gridss": "quay.io/biocontainers/gridss:2.9.4--0",
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "picard":"quay.io/biocontainers/picard:2.23.2--0",
