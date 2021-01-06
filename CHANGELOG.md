@@ -11,12 +11,15 @@ that users understand how the changes affect the new version.
 
 version 1.2.0-develop
 ---------------------
-+ Specify tempdir for BCFtools sorting.
-+ Exclude GRIDSS from merging.
-+ Update Delly docker image
-+ Make bcftools indexing optional
-+ Structural-variantcalling pipeline: add sorting and change id
-+ Added GRIDSS sv caller
++ DUPHOLD: new task addition.
++ BCFtools view: added expression filtering.
++ SMOOVE: enabled genotyping.
++ BCFtools: Specify tempdir for sorting.
++ SURVIVOR: Exclude GRIDSS from merging.
++ DELLY: Update docker image.
++ BCFtools: make indexing optional.
++ BCFtools: add sorting and change id.
++ GRIDSS: Add GRIDSS SV caller.
 
 version 1.1.0
 ---------------------
