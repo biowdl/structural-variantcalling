@@ -45,8 +45,8 @@ workflow SVcalling {
         BwaIndex bwaIndex
         String sample
         String newId = "\'%CHROM\\_%POS\'"
-        String excludePos0 = "'POS=0'"
-        String? exclude
+        String? exclude01
+        String? exclude02
         String? include
         String outputDir = "."
         Map[String, String] dockerImages = {
@@ -166,7 +166,7 @@ workflow SVcalling {
                 inputFile = sort.outputVcf,
                 outputPath = modifiedPrefix + '.changed_id.vcf',
                 newId = newId,
-                exclude = excludePos0
+                exclude = exclude01
        }
 
        call duphold.Duphold as annotateDH {
@@ -186,7 +186,7 @@ workflow SVcalling {
                 dockerImage = dockerImages["bcftools"],
                 inputFile = annotateDH.outputVcf,
                 outputPath = modifiedPrefix + '.filtered.vcf',
-                exclude = exclude,
+                exclude = exclude02,
                 include = include
        }
 
