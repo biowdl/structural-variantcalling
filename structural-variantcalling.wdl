@@ -27,6 +27,7 @@ import "tasks/bwa.wdl" as bwa
 import "tasks/clever.wdl" as clever
 import "tasks/common.wdl" as common
 import "tasks/delly.wdl" as delly
+import "tasks/duphold.wdl" as duphold
 import "tasks/gridss.wdl" as gridss
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
