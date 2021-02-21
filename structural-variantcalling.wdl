@@ -182,7 +182,7 @@ workflow SVcalling {
    call survivor.Merge as survivor {
        input:
             dockerImage = dockerImages["survivor"],
-            filePaths = setId.outputVcf,
+            filePaths = annotateDH.outputVcf,
             outputPath = SVdir + 'survivor/' + sample + '.merged.vcf'
    }
    
