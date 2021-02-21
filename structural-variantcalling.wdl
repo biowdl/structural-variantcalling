@@ -135,7 +135,7 @@ workflow SVcalling {
     }
 
    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
-       (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove"), (gridss.vcf, "gridss")]
+       (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
 
    scatter (pair in vcfAndCaller){
        call picard.RenameSample as renameSample {
