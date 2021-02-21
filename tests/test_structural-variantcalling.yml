@@ -12,3 +12,33 @@
     - path: "test-output/structural-variants/survivor/sample.merged.vcf"
     - path: "test-output/structural-variants/GRIDSS/sample.vcf.gz"
     - path: "test-output/structural-variants/smoove/sample-smoove.vcf.gz"
+
+- name: structural-variantcalling-remove-misHomRef
+  tags:
+    - no_docker_conf
+    - integration
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/integration-remove-misHomRef.json structural-variantcalling.wdl
+  files:
+    - path: "test-output/structural-variants/delly/sample.delly.vcf"
+    - path: "test-output/structural-variants/mateclever/deletions.vcf"
+    - path: "test-output/structural-variants/manta/results/variants/diploidSV.vcf.gz"
+    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
+    - path: "test-output/structural-variants/GRIDSS/sample.vcf.gz"
+    - path: "test-output/structural-variants/smoove/sample-smoove.vcf.gz"
+
+- name: structural-variantcalling-duphold
+  tags:
+    - no_docker_conf
+    - integration
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/integration-duphold.json structural-variantcalling.wdl
+  files:
+    - path: "test-output/structural-variants/delly/sample.delly.vcf"
+    - path: "test-output/structural-variants/mateclever/deletions.vcf"
+    - path: "test-output/structural-variants/manta/results/variants/diploidSV.vcf.gz"
+    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
+    - path: "test-output/structural-variants/GRIDSS/sample.vcf.gz"
+    - path: "test-output/structural-variants/smoove/sample-smoove.vcf.gz"
