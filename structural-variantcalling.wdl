@@ -164,6 +164,18 @@ workflow SVcalling {
                 outputPath = outputPath = modifiedPrefix + '.changed_id.vcf',
                 newId = newId
        }
+	   
+       call duphold.Duphold as annotateDH {
+           input:
+               dockerImage = dockerImages["duphold"],
+               inputVcf = setId.outputVcf,
+               bamFile = bamFile,
+               bamIndex = bamIndex,
+               referenceFasta = referenceFasta,
+               referenceFastaFai = referenceFastaFai,
+               outputPath = modifiedPrefix + '.duphold.vcf',
+               sample = sample + "." + pair.right
+       }
 
    }
    
