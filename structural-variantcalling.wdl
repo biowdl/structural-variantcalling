@@ -153,7 +153,8 @@ workflow SVcalling {
            input:
                 dockerImage = dockerImages["bcftools"],
                 inputFile = renameSample.renamedVcf,
-                outputPath = modifiedPrefix + '.sorted.vcf'
+                outputPath = modifiedPrefix + '.sorted.vcf',
+				tmpDir = SVdir + 'tmp-' + sample + "." + pair.right
        }
 
        call bcftools.Annotate as setId {
