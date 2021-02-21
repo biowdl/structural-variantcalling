@@ -46,6 +46,7 @@ workflow SVcalling {
         String sample
         String newId = "\'%CHROM\\_%POS\'"
 		Boolean excludeMisHomRef = false
+		Boolean excludeFpDupDel = false
         String outputDir = "."
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
@@ -166,36 +167,48 @@ workflow SVcalling {
                 outputPath = modifiedPrefix + '.changed_id.vcf',
                 newId = newId
        }
+	   
+       call duphold.Duphold as annotateDH {
+         input:
+             dockerImage = dockerImages["duphold"],
+             inputVcf = setId.outputVcf,
+             bamFile = bamFile,
+             bamIndex = bamIndex,
+             referenceFasta = referenceFasta,
+             referenceFastaFai = referenceFastaFai,
+             outputPath = modifiedPrefix + '.duphold.vcf',
+             sample = sample + "." + pair.right
+	   }
 
       if (excludeMisHomRef) {
           call bcftools.View as removeMisHomRR {
               input:
                   dockerImage = dockerImages["bcftools"],
-                  inputFile = setId.outputVcf,
-                  outputPath = modifiedPrefix + '.removedMisHomRef.vcf',
+                  inputFile = annotateDH.outputVcf,
+                  outputPath = modifiedPrefix + '.MisHomRef_filtered.vcf',
                   excludeUncalled = true,
                   exclude = "'GT=\"RR\"'"
           }
        }
 
- 
-       call duphold.Duphold as annotateDH {
-           input:
-               dockerImage = dockerImages["duphold"],
-               inputVcf = select_first([removeMisHomRR.outputVcf,setId.outputVcf]),
-               bamFile = bamFile,
-               bamIndex = bamIndex,
-               referenceFasta = referenceFasta,
-               referenceFastaFai = referenceFastaFai,
-               outputPath = modifiedPrefix + '.duphold.vcf',
-               sample = sample + "." + pair.right
-       }
+      if (excludeFpDupDel) {
+          call bcftools.View as removeFpDupDel {
+            input:
+                dockerImage = dockerImages["bcftools"],
+                inputFile = select_first([removeMisHomRR.outputVcf,annotateDH.outputVcf]),
+                outputPath = modifiedPrefix + '.FpDelDup_filtered.vcf',
+				include = "'(SVTYPE = \"DEL\" & FMT/DHFFC[0] < 0.7) | (SVTYPE = \"DUP\" & FMT/DHBFC[0] > 1.3)'"
+          }
+	  }
+	  
+      File toBeMergedVcfs = select_first([removeFpDupDel.outputVcf,removeMisHomRR.outputVcf, annotateDH.outputVcf])
+	  
    }
    
    call survivor.Merge as survivor {
        input:
             dockerImage = dockerImages["survivor"],
-            filePaths = annotateDH.outputVcf,
+            filePaths = toBeMergedVcfs,
             outputPath = SVdir + 'survivor/' + sample + '.merged.vcf'
    }
    
