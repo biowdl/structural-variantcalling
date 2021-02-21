@@ -161,7 +161,7 @@ workflow SVcalling {
            input:
                 dockerImage = dockerImages["bcftools"],
                 inputFile = sort.outputVcf,
-                outputPath = outputPath = modifiedPrefix + '.changed_id.vcf',
+                outputPath = modifiedPrefix + '.changed_id.vcf',
                 newId = newId
        }
 	   
