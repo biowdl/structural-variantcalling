@@ -59,7 +59,9 @@ workflow SVcalling {
         }
     }
     meta {allowNestedInputs: true}
-
+	
+	String SVdir = outputDir + '/structural-variants/'
+	
     call smoove.Call as smoove {
         input:
             dockerImage = dockerImages["smoove"],
@@ -68,7 +70,7 @@ workflow SVcalling {
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
             sample = sample,
-            outputDir = outputDir + '/structural-variants/smoove'
+            outputDir = SVdir + 'smoove'
     }   
 
     call delly.CallSV as delly {
@@ -78,14 +80,14 @@ workflow SVcalling {
             bamIndex = bamIndex,
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
-            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.bcf"
+            outputPath = SVdir + 'delly/' + sample + ".delly.bcf"
     }   
 
     call bcftools.View as delly2vcf {
         input:
             dockerImage = dockerImages["bcftools"],
             inputFile = delly.dellyBcf,
-            outputPath = outputDir + '/structural-variants/delly/' + sample + ".delly.vcf"
+            outputPath = SVdir + 'delly/' + sample + ".delly.vcf"
     } 
 
     call clever.Prediction as clever {
@@ -94,14 +96,14 @@ workflow SVcalling {
             bamFile = bamFile,
             bamIndex = bamIndex,
             bwaIndex = bwaIndex,
-            outputPath = outputDir + '/structural-variants/clever/'
+            outputPath = SVdir + 'clever/'
     } 
     
     call samtools.FilterShortReadsBam {
         input:
             dockerImage = dockerImages["samtools"],
             bamFile = bamFile,
-            outputPathBam = outputDir + '/structural-variants/filteredBam/' + sample + ".filtered.bam"
+            outputPathBam = SVdir + 'filteredBam/' + sample + ".filtered.bam"
     }
 
     call clever.Mateclever as mateclever {
@@ -111,7 +113,7 @@ workflow SVcalling {
             indexedFiteredBam = FilterShortReadsBam.filteredBamIndex,
             bwaIndex = bwaIndex,
             predictions = clever.predictions,
-            outputPath = outputDir + '/structural-variants/mateclever/'
+            outputPath = SVdir + 'mateclever/'
     }
 
     call manta.Germline as manta {
@@ -121,7 +123,7 @@ workflow SVcalling {
             bamIndex = bamIndex,
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
-            runDir = outputDir + '/structural-variants/manta/'
+            runDir = SVdir + 'manta/'
     }
 
     call gridss.GRIDSS as gridss {
@@ -130,7 +132,7 @@ workflow SVcalling {
             tumorBai = bamIndex,
             tumorLabel = sample,
             reference = bwaIndex,
-            outputPrefix = outputDir + '/structural-variants/GRIDSS/' + sample,
+            outputPrefix = SVdir + 'GRIDSS/' + sample,
             dockerImage = dockerImages["gridss"]
     }
 
@@ -138,11 +140,12 @@ workflow SVcalling {
        (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
 
    scatter (pair in vcfAndCaller){
+       String modifiedPrefix = SVdir + 'modifiedVCFs/' + sample + "." + pair.right
        call picard.RenameSample as renameSample {
            input:
                 dockerImage = dockerImages["picard"],
                 inputVcf = pair.left,
-                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.sample_renamed.vcf',
+                outputPath =  modifiedPrefix + '.renamed.vcf',
                 newSampleName = sample + "." + pair.right 
        }
        
@@ -150,14 +153,14 @@ workflow SVcalling {
            input:
                 dockerImage = dockerImages["bcftools"],
                 inputFile = renameSample.renamedVcf,
-                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.sorted.sample_renamed.vcf.gz'
+                outputPath = modifiedPrefix + '.sorted.vcf'
        }
 
        call bcftools.Annotate as setId {
            input:
                 dockerImage = dockerImages["bcftools"],
                 inputFile = sort.outputVcf,
-                outputPath = outputDir + '/structural-variants/modifiedVCFs/' + sample + "." + pair.right + '.changed_id.sorted.sample_renamed.vcf.gz',
+                outputPath = outputPath = modifiedPrefix + '.changed_id.vcf',
                 newId = newId
        }
 
@@ -167,7 +170,7 @@ workflow SVcalling {
        input:
             dockerImage = dockerImages["survivor"],
             filePaths = setId.outputVcf,
-            outputPath = outputDir + '/structural-variants/survivor/' + sample + '.merged.vcf'
+            outputPath = SVdir + 'survivor/' + sample + '.merged.vcf'
    }
    
    output {
