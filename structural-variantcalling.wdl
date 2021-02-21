@@ -45,6 +45,7 @@ workflow SVcalling {
         BwaIndex bwaIndex
         String sample
         String newId = "\'%CHROM\\_%POS\'"
+		Boolean excludeMisHomRef = false
         String outputDir = "."
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
@@ -55,7 +56,8 @@ workflow SVcalling {
             "picard":"quay.io/biocontainers/picard:2.23.2--0",
             "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2",
             "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0",
-            "smoove": "quay.io/biocontainers/smoove:0.2.5--0"
+            "smoove": "quay.io/biocontainers/smoove:0.2.5--0",
+			"duphold": "quay.io/biocontainers/duphold:0.2.1--h516909a_1"
         }
     }
     meta {allowNestedInputs: true}
@@ -164,11 +166,23 @@ workflow SVcalling {
                 outputPath = modifiedPrefix + '.changed_id.vcf',
                 newId = newId
        }
-	   
+
+      if (excludeMisHomRef) {
+          call bcftools.View as removeMisHomRR {
+              input:
+                  dockerImage = dockerImages["bcftools"],
+                  inputFile = setId.outputVcf,
+                  outputPath = modifiedPrefix + '.removedMisHomRef.vcf',
+                  excludeUncalled = true,
+                  exclude = "'GT=\"RR\"'"
+          }
+       }
+
+ 
        call duphold.Duphold as annotateDH {
            input:
                dockerImage = dockerImages["duphold"],
-               inputVcf = setId.outputVcf,
+               inputVcf = select_first([removeMisHomRR.outputVcf,setId.outputVcf]),
                bamFile = bamFile,
                bamIndex = bamIndex,
                referenceFasta = referenceFasta,
@@ -176,7 +190,6 @@ workflow SVcalling {
                outputPath = modifiedPrefix + '.duphold.vcf',
                sample = sample + "." + pair.right
        }
-
    }
    
    call survivor.Merge as survivor {
