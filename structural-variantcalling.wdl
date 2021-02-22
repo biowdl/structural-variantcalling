@@ -223,7 +223,7 @@ workflow SVcalling {
         File gridssVcfIndex = gridss.vcfIndex
         File survivorVcf = survivor.mergedVcf
         File smooveVcf = smoove.smooveVcf
-        Array[File] modifiedVcfs = annotateDH.outputVcf
+        Array[File] modifiedVcfs = toBeMergedVcfs
    }
 
    parameter_meta {
