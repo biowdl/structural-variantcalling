@@ -45,8 +45,8 @@ workflow SVcalling {
         BwaIndex bwaIndex
         String sample
         String newId = "\'%CHROM\\_%POS\'"
-		    Boolean excludeMisHomRef = false
-		    Boolean excludeFpDupDel = false
+        Boolean excludeMisHomRef = false
+        Boolean excludeFpDupDel = false
         String outputDir = "."
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
