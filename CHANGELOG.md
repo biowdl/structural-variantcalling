@@ -11,6 +11,7 @@ that users understand how the changes affect the new version.
 
 version 1.2.0-develop
 ---------------------
++ Remove GRIDSS from the pipeline.
 + Exclude GRIDSS from SURVIVOR merging: SVs were only defined as BNDs in GRIDSS.
 + Optional filtering of missing and hom-ref genotypes. 
 + Optional filtering of FP deletions and duplications.
