@@ -45,7 +45,7 @@ workflow SVcalling {
         String sample
         String newId = "\'%CHROM\\_%POS\'"
         Boolean excludeMisHomRef = false
-        Boolean excludeFpDupDel = false
+        Boolean runDupHold = false
         String outputDir = "."
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
@@ -158,40 +158,40 @@ workflow SVcalling {
                 newId = newId
         }
 
-        call duphold.Duphold as annotateDH {
-            input:
-            dockerImage = dockerImages["duphold"],
-            inputVcf = setId.outputVcf,
-            bamFile = bamFile,
-            bamIndex = bamIndex,
-            referenceFasta = referenceFasta,
-            referenceFastaFai = referenceFastaFai,
-            outputPath = modifiedPrefix + '.duphold.vcf',
-            sample = sample + "." + pair.right
+        if (runDupHold) {
+            call duphold.Duphold as annotateDH {
+                input:
+                    dockerImage = dockerImages["duphold"],
+                    inputVcf = setId.outputVcf,
+                    bamFile = bamFile,
+                    bamIndex = bamIndex,
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
+                    outputPath = modifiedPrefix + '.duphold.vcf',
+                    sample = sample + "." + pair.right
+            }
+
+            call bcftools.View as removeFpDupDel {
+                input:
+                    dockerImage = dockerImages["bcftools"],
+                    inputFile = annotateDH.outputVcf,
+                    outputPath = modifiedPrefix + '.FpDelDup_filtered.vcf',
+                    include = "'(SVTYPE = \"DEL\" & FMT/DHFFC[0] < 0.7) | (SVTYPE = \"DUP\" & FMT/DHBFC[0] > 1.3)'"
+            }
         }
 
         if (excludeMisHomRef) {
             call bcftools.View as removeMisHomRR {
                 input:
                 dockerImage = dockerImages["bcftools"],
-                inputFile = annotateDH.outputVcf,
+                inputFile = select_first([setId.outputVcf, removeFpDupDel.outputVcf]),
                 outputPath = modifiedPrefix + '.MisHomRef_filtered.vcf',
                 excludeUncalled = true,
                 exclude = "'GT=\"RR\"'"
             }
         }
 
-        if (excludeFpDupDel) {
-            call bcftools.View as removeFpDupDel {
-                input:
-                    dockerImage = dockerImages["bcftools"],
-                    inputFile = select_first([removeMisHomRR.outputVcf,annotateDH.outputVcf]),
-                    outputPath = modifiedPrefix + '.FpDelDup_filtered.vcf',
-                    include = "'(SVTYPE = \"DEL\" & FMT/DHFFC[0] < 0.7) | (SVTYPE = \"DUP\" & FMT/DHBFC[0] > 1.3)'"
-            }
-        }
-
-        File toBeMergedVcfs = select_first([removeFpDupDel.outputVcf,removeMisHomRR.outputVcf, annotateDH.outputVcf])
+        File toBeMergedVcfs = select_first([setId.outputVcf,removeFpDupDel.outputVcf, removeMisHomRR.outputVcf])
     }
 
     call survivor.Merge as survivor {
@@ -224,7 +224,6 @@ workflow SVcalling {
         sample: {description: "The name of the sample", category: "required"}
         newId: {description: "Assign ID on the fly (e.g. --set-id +'%CHROM\_%POS').", category: "advanced"}
         excludeMisHomRef: {description: "Option to exclude missing and homozygous reference genotypes.", category: "advanced"}
-        excludeFpDupDel: {description: "Option to exclude false positive duplications and deletions according to DUPHOLD.", category: "advanced"}
         dockerImages: {description: "A map describing the docker image used for the tasks.",
                            category: "advanced"}
     }
