@@ -28,7 +28,6 @@ import "tasks/clever.wdl" as clever
 import "tasks/common.wdl" as common
 import "tasks/delly.wdl" as delly
 import "tasks/duphold.wdl" as duphold
-import "tasks/gridss.wdl" as gridss
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
@@ -45,26 +44,27 @@ workflow SVcalling {
         BwaIndex bwaIndex
         String sample
         String newId = "\'%CHROM\\_%POS\'"
-        String? exclude01
-        String? exclude02
-        String? include
+        Boolean excludeMisHomRef = false
+        Boolean excludeFpDupDel = false
         String outputDir = "."
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
             "clever": "quay.io/biocontainers/clever-toolkit:2.4--py36hcfe0e84_6",
             "delly": "quay.io/biocontainers/delly:0.8.5--hf3ca161_0",
-            "gridss": "quay.io/biocontainers/gridss:2.9.4--0",
+            "delly": "quay.io/biocontainers/delly:0.8.1--h4037b6b_1",
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "picard":"quay.io/biocontainers/picard:2.23.2--0",
             "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2",
             "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0",
-            "smoove": "quay.io/biocontainers/smoove:0.2.5--0"
+            "smoove": "quay.io/biocontainers/smoove:0.2.5--0",
+            "duphold": "quay.io/biocontainers/duphold:0.2.1--h516909a_1"
         }
     }
+
     meta {allowNestedInputs: true}
 
     String SVdir = outputDir + '/structural-variants/'
-
+	
     call smoove.Call as smoove {
         input:
             dockerImage = dockerImages["smoove"],
@@ -74,7 +74,7 @@ workflow SVcalling {
             referenceFastaFai = referenceFastaFai,
             sample = sample,
             outputDir = SVdir + 'smoove'
-    }
+    }   
 
     call delly.CallSV as delly {
         input:
@@ -84,14 +84,14 @@ workflow SVcalling {
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
             outputPath = SVdir + 'delly/' + sample + ".delly.bcf"
-    }
+    }   
 
     call bcftools.View as delly2vcf {
         input:
             dockerImage = dockerImages["bcftools"],
             inputFile = delly.dellyBcf,
             outputPath = SVdir + 'delly/' + sample + ".delly.vcf"
-    }
+    } 
 
     call clever.Prediction as clever {
         input:
@@ -100,8 +100,8 @@ workflow SVcalling {
             bamIndex = bamIndex,
             bwaIndex = bwaIndex,
             outputPath = SVdir + 'clever/'
-    }
-
+    } 
+    
     call samtools.FilterShortReadsBam {
         input:
             dockerImage = dockerImages["samtools"],
@@ -129,91 +129,92 @@ workflow SVcalling {
             runDir = SVdir + 'manta/'
     }
 
-    call gridss.GRIDSS as gridss {
-        input:
-            tumorBam = bamFile,
-            tumorBai = bamIndex,
-            tumorLabel = sample,
-            reference = bwaIndex,
-            outputPrefix = SVdir + 'GRIDSS/' + sample,
-            dockerImage = dockerImages["gridss"]
-    }
-
-   Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"),
+    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
        (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
 
-   scatter (pair in vcfAndCaller){
-       String modifiedPrefix = SVdir + 'modifiedVCFs/' + sample + "." + pair.right
-       call picard.RenameSample as renameSample {
-           input:
+    scatter (pair in vcfAndCaller) {
+        String modifiedPrefix = SVdir + 'modifiedVCFs/' + sample + "." + pair.right
+
+        call picard.RenameSample as renameSample {
+            input:
                 dockerImage = dockerImages["picard"],
                 inputVcf = pair.left,
                 outputPath =  modifiedPrefix + '.renamed.vcf',
                 newSampleName = sample + "." + pair.right
-       }
+        }
 
-       call bcftools.Sort as sort {
-           input:
+        call bcftools.Sort as sort {
+            input:
                 dockerImage = dockerImages["bcftools"],
                 inputFile = renameSample.renamedVcf,
                 outputPath = modifiedPrefix + '.sorted.vcf',
                 tmpDir = SVdir + 'tmp-' + sample + "." + pair.right
-       }
+        }
 
-       call bcftools.Annotate as setId {
-           input:
+        call bcftools.Annotate as setId {
+            input:
                 dockerImage = dockerImages["bcftools"],
                 inputFile = sort.outputVcf,
                 outputPath = modifiedPrefix + '.changed_id.vcf',
-                newId = newId,
-                exclude = exclude01
-       }
+                newId = newId
+        }
 
-       call duphold.Duphold as annotateDH {
-           input:
-               dockerImage = dockerImages["duphold"],
-               inputVcf = setId.outputVcf,
-               bamFile = bamFile,
-               bamIndex = bamIndex,
-               referenceFasta = referenceFasta,
-               referenceFastaFai = referenceFastaFai,
-               outputPath = modifiedPrefix + '.duphold.vcf',
-               sample = sample + "." + pair.right
-       }
+        call duphold.Duphold as annotateDH {
+            input:
+            dockerImage = dockerImages["duphold"],
+            inputVcf = setId.outputVcf,
+            bamFile = bamFile,
+            bamIndex = bamIndex,
+            referenceFasta = referenceFasta,
+            referenceFastaFai = referenceFastaFai,
+            outputPath = modifiedPrefix + '.duphold.vcf',
+            sample = sample + "." + pair.right
+        }
 
-       call bcftools.View as filterFP {
-           input:
+        if (excludeMisHomRef) {
+            call bcftools.View as removeMisHomRR {
+                input:
                 dockerImage = dockerImages["bcftools"],
                 inputFile = annotateDH.outputVcf,
-                outputPath = modifiedPrefix + '.filtered.vcf',
-                exclude = exclude02,
-                include = include
-       }
+                outputPath = modifiedPrefix + '.MisHomRef_filtered.vcf',
+                excludeUncalled = true,
+                exclude = "'GT=\"RR\"'"
+            }
+        }
 
-   }
+        if (excludeFpDupDel) {
+            call bcftools.View as removeFpDupDel {
+                input:
+                    dockerImage = dockerImages["bcftools"],
+                    inputFile = select_first([removeMisHomRR.outputVcf,annotateDH.outputVcf]),
+                    outputPath = modifiedPrefix + '.FpDelDup_filtered.vcf',
+                    include = "'(SVTYPE = \"DEL\" & FMT/DHFFC[0] < 0.7) | (SVTYPE = \"DUP\" & FMT/DHBFC[0] > 1.3)'"
+            }
+        }
 
-   call survivor.Merge as survivor {
-       input:
+        File toBeMergedVcfs = select_first([removeFpDupDel.outputVcf,removeMisHomRR.outputVcf, annotateDH.outputVcf])
+    }
+
+    call survivor.Merge as survivor {
+        input:
             dockerImage = dockerImages["survivor"],
-            filePaths = filterFP.outputVcf,
+            filePaths = toBeMergedVcfs,
             outputPath = SVdir + 'survivor/' + sample + '.merged.vcf'
-   }
+    }
 
-   output {
+    output {
         File cleverPredictions = clever.predictions
         File cleverVcf = mateclever.matecleverVcf
         File mantaVcf = manta.mantaVCF
         File dellyBcf = delly.dellyBcf
         File dellyVcf = delly2vcf.outputVcf
         File? dellyVcfIndex = delly2vcf.outputVcfIndex
-        File gridssVcf = gridss.vcf
-        File gridssVcfIndex = gridss.vcfIndex
         File survivorVcf = survivor.mergedVcf
         File smooveVcf = smoove.smooveVcf
-        Array[File] modifiedVcfs = filterFP.outputVcf
-   }
+        Array[File] modifiedVcfs = toBeMergedVcfs
+    }
 
-   parameter_meta {
+    parameter_meta {
         outputDir: {description: "The directory the output should be written to.", category: "common"}
         referenceFasta: { description: "The reference fasta file", category: "required" }
         referenceFastaFai: { description: "Fasta index (.fai) file of the reference", category: "required" }
@@ -223,9 +224,9 @@ workflow SVcalling {
         bwaIndex: {description: "Struct containing the BWA reference files", category: "required"}
         sample: {description: "The name of the sample", category: "required"}
         newId: {description: "Assign ID on the fly (e.g. --set-id +'%CHROM\_%POS').", category: "advanced"}
-        include: {description: "Select sites for which the expression is true (see man page for details).", category: "advanced"}
-        exclude: {description: "Exclude sites for which the expression is true (see man page for details).", category: "advanced"}
+        excludeMisHomRef: {description: "Option to exclude missing and homozygous reference genotypes.", category: "advanced"}
+        excludeFpDupDel: {description: "Option to exclude false positive duplications and deletions according to DUPHOLD.", category: "advanced"}
         dockerImages: {description: "A map describing the docker image used for the tasks.",
                            category: "advanced"}
-   }
+    }
 }

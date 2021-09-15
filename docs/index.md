@@ -73,7 +73,7 @@ biowdl pipelines. The list of default images for this pipeline can be
 found in the default for the `dockerImages` input.
 
 ### Output
-This pipeline produces VCF files from Delly, Manta, and Mateclever, as well as the merged VCF file from SURVIVOR. 
+This pipeline produces VCF files from Delly, Manta, Mateclever, and Smoove, as well as the merged VCF file from SURVIVOR. 
 
 ## Contact
 <p>

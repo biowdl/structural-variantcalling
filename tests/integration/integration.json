@@ -1,7 +1,5 @@
 {
   "SVcalling.bamIndex": "tests/data/ref_with_svs.bai",
-  "SVcalling.gridss.jvmHeapSizeGb" : 1,
-  "SVcalling.runGridSS": false,
   "SVcalling.sample": "sample",
   "SVcalling.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
   "SVcalling.referenceFasta": "tests/data/reference/reference.fasta",
