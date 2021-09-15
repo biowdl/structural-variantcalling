@@ -191,7 +191,7 @@ workflow SVcalling {
             }
         }
 
-        File toBeMergedVcfs = select_first([setId.outputVcf,removeFpDupDel.outputVcf, removeMisHomRR.outputVcf])
+        File toBeMergedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
     }
 
     call survivor.Merge as survivor {
