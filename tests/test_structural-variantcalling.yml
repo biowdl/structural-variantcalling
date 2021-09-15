@@ -7,12 +7,8 @@
     -i tests/integration/integration.json structural-variantcalling.wdl
   files:
     - path: "test-output/structural-variants/modifiedVCFs/sample.clever.changed_id.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.changed_id.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.changed_id.vcf"
     - path: "test-output/structural-variants/modifiedVCFs/sample.delly.changed_id.vcf"
     - path: "test-output/structural-variants/modifiedVCFs/sample.manta.changed_id.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.changed_id.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.changed_id.vcf"
     - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.changed_id.vcf"
     - path: "test-output/structural-variants/survivor/sample.merged.vcf"
 
@@ -25,12 +21,8 @@
     -i tests/integration/integration-remove-misHomRef.json structural-variantcalling.wdl
   files:
     - path: "test-output/structural-variants/modifiedVCFs/sample.clever.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.MisHomRef_filtered.vcf"
     - path: "test-output/structural-variants/modifiedVCFs/sample.delly.MisHomRef_filtered.vcf"
     - path: "test-output/structural-variants/modifiedVCFs/sample.manta.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.MisHomRef_filtered.vcf"
     - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.MisHomRef_filtered.vcf"
     - path: "test-output/structural-variants/survivor/sample.merged.vcf"
 
@@ -43,11 +35,7 @@
     -i tests/integration/integration-duphold.json structural-variantcalling.wdl
   files:
     - path: "test-output/structural-variants/modifiedVCFs/sample.clever.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.FpDelDup_filtered.vcf"
     - path: "test-output/structural-variants/modifiedVCFs/sample.delly.FpDelDup_filtered.vcf"
     - path: "test-output/structural-variants/modifiedVCFs/sample.manta.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.FpDelDup_filtered.vcf"
     - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.FpDelDup_filtered.vcf"
     - path: "test-output/structural-variants/survivor/sample.merged.vcf"
