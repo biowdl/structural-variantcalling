@@ -8,11 +8,14 @@ Newest changes should be on top.
 This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
+version 1.3.0-dev
+---------------------
++ Structural-variantcalling pipeline: Update CLEVER dockerimage
 
 version 1.2.0
 ---------------------
 + DELLY: Update docker image.
-+ Remove GRIDSS from the pipeline.
++ Structural-variantcalling pipeline: Remove GRIDSS from the pipeline.
 + Exclude GRIDSS from SURVIVOR merging: SVs were only defined as BNDs in GRIDSS.
 + Optional filtering of missing and hom-ref genotypes. 
 + Optional filtering of FP deletions and duplications.
