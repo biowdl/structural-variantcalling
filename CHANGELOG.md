@@ -10,7 +10,8 @@ that users understand how the changes affect the new version.
 -->
 version 1.3.0-dev
 ---------------------
-+ Structural-variantcalling pipeline: Update CLEVER dockerimage
++ Replace excludeFpDupDel-option with runDuphold-option: DupHold annotation and FP filtering are now optional together.
++ Update CLEVER dockerimage.
 
 version 1.2.0
 ---------------------
