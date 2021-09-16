@@ -205,7 +205,6 @@ workflow SVcalling {
         File cleverPredictions = clever.predictions
         File cleverVcf = mateclever.matecleverVcf
         File mantaVcf = manta.mantaVCF
-        File dellyBcf = delly.dellyBcf
         File dellyVcf = delly2vcf.outputVcf
         File? dellyVcfIndex = delly2vcf.outputVcfIndex
         File survivorVcf = survivor.mergedVcf
