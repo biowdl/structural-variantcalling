@@ -214,11 +214,8 @@ workflow SVcalling {
     }
 
     output {
-        File cleverVcf = mateclever.matecleverVcf
-        File mantaVcf = manta.mantaVCF
-        File dellyVcf = delly2vcf.outputVcf
-        File smooveVcf = smoove.smooveVcf
-        Array[Array[File?]] modifiedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
+        Array[File] = [mateclever.matecleverVcf, manta.mantaVCF, delly2vcf.outputVcf, smoove.smooveVcf]
+        Array[Array[File]] modifiedVcfs = toBeMergedVcfs
         Array[File] survivorVcfs = survivor.mergedVcf
     }
 
