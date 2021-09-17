@@ -43,6 +43,7 @@ workflow SVcalling {
         File referenceFastaDict
         BwaIndex bwaIndex
         String sample
+        Array[String] svtypes = ["DEL", "DUP", "INS", "INV", "BND"]
         String newId = "\'%CHROM\\_%POS\'"
         Boolean excludeMisHomRef = false
         Boolean runDupHold = false
@@ -115,7 +116,7 @@ workflow SVcalling {
             indexedFiteredBam = FilterShortReadsBam.filteredBamIndex,
             bwaIndex = bwaIndex,
             predictions = clever.predictions,
-            outputPath = SVdir + 'mateclever/'
+            outputPath = SVdir + 'clever/'
     }
 
     call manta.Germline as manta {
@@ -131,85 +132,94 @@ workflow SVcalling {
     Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
        (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
 
-    scatter (pair in vcfAndCaller) {
-        String modifiedPrefix = SVdir + 'modifiedVCFs/' + sample + "." + pair.right
+    scatter (svtype in svtypes) {
+         scatter (pair in vcfAndCaller) {
+            String prefix = SVdir + pair.right + '/' + svtype
 
-        call picard.RenameSample as renameSample {
-            input:
-                dockerImage = dockerImages["picard"],
-                inputVcf = pair.left,
-                outputPath =  modifiedPrefix + '.renamed.vcf',
-                newSampleName = sample + "." + pair.right
-        }
-
-        call bcftools.Sort as sort {
-            input:
-                dockerImage = dockerImages["bcftools"],
-                inputFile = renameSample.renamedVcf,
-                outputPath = modifiedPrefix + '.sorted.vcf',
-                tmpDir = SVdir + 'tmp-' + sample + "." + pair.right
-        }
-
-        call bcftools.Annotate as setId {
-            input:
-                dockerImage = dockerImages["bcftools"],
-                inputFile = sort.outputVcf,
-                outputPath = modifiedPrefix + '.changed_id.vcf',
-                newId = newId
-        }
-
-        if (runDupHold) {
-            call duphold.Duphold as annotateDH {
-                input:
-                    dockerImage = dockerImages["duphold"],
-                    inputVcf = setId.outputVcf,
-                    bamFile = bamFile,
-                    bamIndex = bamIndex,
-                    referenceFasta = referenceFasta,
-                    referenceFastaFai = referenceFastaFai,
-                    outputPath = modifiedPrefix + '.duphold.vcf',
-                    sample = sample + "." + pair.right
-            }
-
-            call bcftools.View as removeFpDupDel {
+            call bcftools.View as getSVtype {
                 input:
                     dockerImage = dockerImages["bcftools"],
-                    inputFile = annotateDH.outputVcf,
-                    outputPath = modifiedPrefix + '.FpDelDup_filtered.vcf',
-                    include = "'(SVTYPE = \"DEL\" & FMT/DHFFC[0] < 0.7) | (SVTYPE = \"DUP\" & FMT/DHBFC[0] > 1.3)'"
+                    inputFile = pair.left,
+                    outputPath = prefix + '.vcf',
+                    include = "'SVTYPE=\"${svtype}\"'"
             }
-        }
 
-        if (excludeMisHomRef) {
-            call bcftools.View as removeMisHomRR {
+            call picard.RenameSample as renameSample {
                 input:
-                dockerImage = dockerImages["bcftools"],
-                inputFile = select_first([setId.outputVcf, removeFpDupDel.outputVcf]),
-                outputPath = modifiedPrefix + '.MisHomRef_filtered.vcf',
-                excludeUncalled = true,
-                exclude = "'GT=\"RR\"'"
+                    dockerImage = dockerImages["picard"],
+                    inputVcf = getSVtype.outputVcf,
+                    outputPath =  prefix + '.renamed.vcf',
+                    newSampleName = pair.right
             }
+
+            call bcftools.Sort as sort {
+                input:
+                    dockerImage = dockerImages["bcftools"],
+                    inputFile = renameSample.renamedVcf,
+                    outputPath = prefix + '.sorted.vcf',
+                    tmpDir = SVdir + 'tmp-' + sample + "." + pair.right
+            }
+
+            call bcftools.Annotate as setId {
+                input:
+                    dockerImage = dockerImages["bcftools"],
+                    inputFile = sort.outputVcf,
+                    outputPath = prefix + '.changed_id.vcf',
+                    newId = newId
+            }
+
+            if (runDupHold) {
+                call duphold.Duphold as annotateDH {
+                    input:
+                        dockerImage = dockerImages["duphold"],
+                        inputVcf = setId.outputVcf,
+                        bamFile = bamFile,
+                        bamIndex = bamIndex,
+                        referenceFasta = referenceFasta,
+                        referenceFastaFai = referenceFastaFai,
+                        outputPath = prefix + '.duphold.vcf',
+                        sample = pair.right
+                }
+
+                call bcftools.View as removeFpDupDel {
+                    input:
+                        dockerImage = dockerImages["bcftools"],
+                        inputFile = annotateDH.outputVcf,
+                        outputPath = prefix + '.duphold_filtered.vcf',
+                        include = "'(SVTYPE = \"DEL\" & FMT/DHFFC[0] < 0.7) | (SVTYPE = \"DUP\" & FMT/DHBFC[0] > 1.3)'"
+                }
+            }
+
+            if (excludeMisHomRef) {
+                call bcftools.View as removeMisHomRR {
+                    input:
+                    dockerImage = dockerImages["bcftools"],
+                    inputFile = select_first([setId.outputVcf, removeFpDupDel.outputVcf]),
+                    outputPath = prefix + '.GT_filtered.vcf',
+                    excludeUncalled = true,
+                    exclude = "'GT=\"RR\"'"
+                }
+            }
+
+            File toBeMergedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
+         }
+
+        call survivor.Merge as survivor {
+            input:
+                dockerImage = dockerImages["survivor"],
+                filePaths = toBeMergedVcfs,
+                outputPath = SVdir + 'survivor/' + svtype + '.union.vcf',
+                suppVecs = 1
         }
-
-        File toBeMergedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
-    }
-
-    call survivor.Merge as survivor {
-        input:
-            dockerImage = dockerImages["survivor"],
-            filePaths = toBeMergedVcfs,
-            outputPath = SVdir + 'survivor/' + sample + '.merged.vcf'
     }
 
     output {
-        File cleverPredictions = clever.predictions
         File cleverVcf = mateclever.matecleverVcf
         File mantaVcf = manta.mantaVCF
         File dellyVcf = delly2vcf.outputVcf
-        File? dellyVcfIndex = delly2vcf.outputVcfIndex
-        File survivorVcf = survivor.mergedVcf
         File smooveVcf = smoove.smooveVcf
-        Array[File] modifiedVcfs = toBeMergedVcfs
+        Array[Array[File?]] modifiedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
+        Array[File] survivorVcfs = survivor.mergedVcf
     }
 
     parameter_meta {
