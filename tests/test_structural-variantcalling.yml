@@ -11,6 +11,7 @@
     - path: "test-output/structural-variants/smoove/DEL.changed_id.vcf"
     - path: "test-output/structural-variants/delly/DEL.changed_id.vcf"
     - path: "test-output/structural-variants/survivor/DEL.union.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.isec.vcf"
 
 - name: structural-variantcalling-remove-misHomRef
   tags:
@@ -25,6 +26,7 @@
     - path: "test-output/structural-variants/smoove/DEL.GT_filtered.vcf"
     - path: "test-output/structural-variants/delly/DEL.GT_filtered.vcf"
     - path: "test-output/structural-variants/survivor/DEL.union.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.isec.vcf"
 
 - name: structural-variantcalling-duphold
   tags:
@@ -39,3 +41,4 @@
     - path: "test-output/structural-variants/smoove/DEL.duphold_filtered.vcf"
     - path: "test-output/structural-variants/delly/DEL.duphold_filtered.vcf"
     - path: "test-output/structural-variants/survivor/DEL.union.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.isec.vcf"
