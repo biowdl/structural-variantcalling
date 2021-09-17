@@ -44,7 +44,6 @@ workflow SVcalling {
         BwaIndex bwaIndex
         String sample
         Array[String] svtypes = ["DEL", "DUP", "INS", "INV", "BND"]
-        String newId = "\'%CHROM\\_%POS\'"
         Boolean excludeMisHomRef = false
         Boolean runDupHold = false
         String outputDir = "."
@@ -165,7 +164,7 @@ workflow SVcalling {
                     dockerImage = dockerImages["bcftools"],
                     inputFile = sort.outputVcf,
                     outputPath = prefix + '.changed_id.vcf',
-                    newId = newId
+                    newId = "'${pair.right}\_%CHROM\_%POS\_%END'"
             }
 
             if (runDupHold) {
@@ -214,7 +213,7 @@ workflow SVcalling {
     }
 
     output {
-        Array[File] = [mateclever.matecleverVcf, manta.mantaVCF, delly2vcf.outputVcf, smoove.smooveVcf]
+        Array[File] rawVcfs = [mateclever.matecleverVcf, manta.mantaVCF, delly2vcf.outputVcf, smoove.smooveVcf]
         Array[Array[File]] modifiedVcfs = toBeMergedVcfs
         Array[File] survivorVcfs = survivor.mergedVcf
     }
