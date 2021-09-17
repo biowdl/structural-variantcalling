@@ -210,12 +210,21 @@ workflow SVcalling {
                 outputPath = SVdir + 'survivor/' + svtype + '.union.vcf',
                 suppVecs = 1
         }
+
+        call bcftools.View as getIntersections {
+            input:
+            dockerImage = dockerImages["bcftools"],
+            inputFile = survivor.mergedVcf,
+            outputPath = SVdir + 'survivor/' + svtype + '.isec.vcf',
+            exclude = "'SUPP=\"1\"'"
+        }
     }
 
     output {
         Array[File] rawVcfs = [mateclever.matecleverVcf, manta.mantaVCF, delly2vcf.outputVcf, smoove.smooveVcf]
         Array[Array[File]] modifiedVcfs = toBeMergedVcfs
-        Array[File] survivorVcfs = survivor.mergedVcf
+        Array[File] unionVCFs = survivor.mergedVcf
+        Array[File] isecVCFs = getIntersections.outputVcf
     }
 
     parameter_meta {
