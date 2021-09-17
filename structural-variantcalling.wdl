@@ -164,7 +164,7 @@ workflow SVcalling {
                     dockerImage = dockerImages["bcftools"],
                     inputFile = sort.outputVcf,
                     outputPath = prefix + '.changed_id.vcf',
-                    newId = "'${pair.right}\_%CHROM\_%POS\_%END'"
+                    newId = "'${pair.right}\\_%CHROM\\_%POS\\_%END'"
             }
 
             if (runDupHold) {
@@ -227,7 +227,6 @@ workflow SVcalling {
         bamIndex: {description: "BAM index(.bai) file", category: "required"}
         bwaIndex: {description: "Struct containing the BWA reference files", category: "required"}
         sample: {description: "The name of the sample", category: "required"}
-        newId: {description: "Assign ID on the fly (e.g. --set-id +'%CHROM\_%POS').", category: "advanced"}
         excludeMisHomRef: {description: "Option to exclude missing and homozygous reference genotypes.", category: "advanced"}
         dockerImages: {description: "A map describing the docker image used for the tasks.",
                            category: "advanced"}
