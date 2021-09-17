@@ -20,11 +20,11 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/integration-remove-misHomRef.json structural-variantcalling.wdl
   files:
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
+    - path: "test-output/structural-variants/clever/DEL.GT_filtered.vcf"
+    - path: "test-output/structural-variants/manta/DEL.GT_filtered.vcf"
+    - path: "test-output/structural-variants/smoove/DEL.GT_filtered.vcf"
+    - path: "test-output/structural-variants/delly/DEL.GT_filtered.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.union.vcf"
 
 - name: structural-variantcalling-duphold
   tags:
@@ -34,8 +34,8 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/integration-duphold.json structural-variantcalling.wdl
   files:
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
+    - path: "test-output/structural-variants/clever/DEL.duphold_filtered.vcf"
+    - path: "test-output/structural-variants/manta/DEL.duphold_filtered.vcf"
+    - path: "test-output/structural-variants/smoove/DEL.duphold_filtered.vcf"
+    - path: "test-output/structural-variants/delly/DEL.duphold_filtered.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.union.vcf"
