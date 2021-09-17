@@ -6,11 +6,11 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/integration.json structural-variantcalling.wdl
   files:
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.changed_id.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.changed_id.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.changed_id.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.changed_id.vcf"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
+    - path: "test-output/structural-variants/clever/DEL.changed_id.vcf"
+    - path: "test-output/structural-variants/manta/DEL.changed_id.vcf"
+    - path: "test-output/structural-variants/smoove/DEL.changed_id.vcf"
+    - path: "test-output/structural-variants/delly/DEL.changed_id.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.union.vcf"
 
 - name: structural-variantcalling-remove-misHomRef
   tags:
