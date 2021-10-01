@@ -221,7 +221,10 @@ workflow SVcalling {
     }
 
     output {
-        Array[File] rawVcfs = [mateclever.matecleverVcf, manta.mantaVCF, delly2vcf.outputVcf, smoove.smooveVcf]
+        File cleverVcf = mateclever.matecleverVcf
+        File mantaVcf = manta.mantaVCF
+        File dellyVcf = delly2vcf.outputVcf
+        File smooveVcf = smoove.smooveVcf
         Array[Array[File]] modifiedVcfs = toBeMergedVcfs
         Array[File] unionVCFs = survivor.mergedVcf
         Array[File] isecVCFs = getIntersections.outputVcf
