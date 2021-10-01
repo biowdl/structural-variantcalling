@@ -8,10 +8,18 @@ Newest changes should be on top.
 This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
+version 1.3.0-dev
+---------------------
++ Both union and intersection from each SV types are generated. 
++ The pipeline now first seperate SVs by types before merging.
++ Duphold can now be run optionally to annotate and remove FP deletions and duplications.
++ Replace excludeFpDupDel-option with runDuphold-option: DupHold annotation and FP filtering are now optional together.
++ Update CLEVER dockerimage.
++ DELLY: Update docker image.
 
 version 1.2.0
 ---------------------
-+ Remove GRIDSS from the pipeline.
++ Structural-variantcalling pipeline: Remove GRIDSS from the pipeline.
 + Exclude GRIDSS from SURVIVOR merging: SVs were only defined as BNDs in GRIDSS.
 + Optional filtering of missing and hom-ref genotypes. 
 + Optional filtering of FP deletions and duplications.

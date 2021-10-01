@@ -6,21 +6,12 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/integration.json structural-variantcalling.wdl
   files:
-    - path: "test-output/structural-variants/delly/sample.delly.vcf"
-    - path: "test-output/structural-variants/mateclever/deletions.vcf"
-    - path: "test-output/structural-variants/manta/results/variants/diploidSV.vcf.gz"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
-    - path: "test-output/structural-variants/smoove/sample-smoove.vcf.gz"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.duphold.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.duphold.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.duphold.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.duphold.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.duphold.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.duphold.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.duphold.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.duphold.vcf"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
+    - path: "test-output/structural-variants/clever/DEL.changed_id.vcf"
+    - path: "test-output/structural-variants/manta/DEL.changed_id.vcf"
+    - path: "test-output/structural-variants/smoove/DEL.changed_id.vcf"
+    - path: "test-output/structural-variants/delly/DEL.changed_id.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.union.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.isec.vcf"
 
 - name: structural-variantcalling-remove-misHomRef
   tags:
@@ -30,21 +21,12 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/integration-remove-misHomRef.json structural-variantcalling.wdl
   files:
-    - path: "test-output/structural-variants/delly/sample.delly.vcf"
-    - path: "test-output/structural-variants/mateclever/deletions.vcf"
-    - path: "test-output/structural-variants/manta/results/variants/diploidSV.vcf.gz"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
-    - path: "test-output/structural-variants/smoove/sample-smoove.vcf.gz"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.MisHomRef_filtered.vcf"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
+    - path: "test-output/structural-variants/clever/DEL.GT_filtered.vcf"
+    - path: "test-output/structural-variants/manta/DEL.GT_filtered.vcf"
+    - path: "test-output/structural-variants/smoove/DEL.GT_filtered.vcf"
+    - path: "test-output/structural-variants/delly/DEL.GT_filtered.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.union.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.isec.vcf"
 
 - name: structural-variantcalling-duphold
   tags:
@@ -54,18 +36,9 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/integration-duphold.json structural-variantcalling.wdl
   files:
-    - path: "test-output/structural-variants/delly/sample.delly.vcf"
-    - path: "test-output/structural-variants/mateclever/deletions.vcf"
-    - path: "test-output/structural-variants/manta/results/variants/diploidSV.vcf.gz"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
-    - path: "test-output/structural-variants/smoove/sample-smoove.vcf.gz"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.clever.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.delly.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.manta.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/modifiedVCFs/sample.smoove.FpDelDup_filtered.vcf"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
-    - path: "test-output/structural-variants/survivor/sample.merged.vcf"
+    - path: "test-output/structural-variants/clever/DEL.duphold_filtered.vcf"
+    - path: "test-output/structural-variants/manta/DEL.duphold_filtered.vcf"
+    - path: "test-output/structural-variants/smoove/DEL.duphold_filtered.vcf"
+    - path: "test-output/structural-variants/delly/DEL.duphold_filtered.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.union.vcf"
+    - path: "test-output/structural-variants/survivor/DEL.isec.vcf"
