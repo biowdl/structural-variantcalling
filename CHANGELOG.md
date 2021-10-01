@@ -10,6 +10,9 @@ that users understand how the changes affect the new version.
 -->
 version 1.3.0-dev
 ---------------------
++ Both union and intersection from each SV types are generated. 
++ The pipeline now first seperate SVs by types before merging.
++ Duphold can now be run optionally to annotate and remove FP deletions and duplications.
 + Replace excludeFpDupDel-option with runDuphold-option: DupHold annotation and FP filtering are now optional together.
 + Update CLEVER dockerimage.
 
