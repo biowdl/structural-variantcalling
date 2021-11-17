@@ -193,7 +193,7 @@ workflow SVcalling {
                 call bcftools.View as removeMisHomRR {
                     input:
                     dockerImage = dockerImages["bcftools"],
-                    inputFile = select_first([setId.outputVcf, removeFpDupDel.outputVcf]),
+                    inputFile = select_first([removeFpDupDel.outputVcf, setId.outputVcf]),
                     outputPath = prefix + '.GT_filtered.vcf',
                     excludeUncalled = true,
                     exclude = "'GT=\"RR\"'"
