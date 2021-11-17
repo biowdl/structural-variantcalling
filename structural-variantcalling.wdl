@@ -221,7 +221,8 @@ workflow SVcalling {
     }
 
     output {
-        File cleverVcf = mateclever.matecleverVcf
+        File cleverVcf = clever.predictions
+        File mateCleverVcf = mateclever.matecleverVcf
         File mantaVcf = manta.mantaVCF
         File dellyVcf = delly2vcf.outputVcf
         File smooveVcf = smoove.smooveVcf
