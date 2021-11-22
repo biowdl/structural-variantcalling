@@ -115,7 +115,7 @@ workflow SVcalling {
             indexedFiteredBam = FilterShortReadsBam.filteredBamIndex,
             bwaIndex = bwaIndex,
             predictions = clever.predictions,
-            outputPath = SVdir + 'clever/'
+            outputPath = SVdir + 'mateclever/'
     }
 
     call manta.Germline as manta {
