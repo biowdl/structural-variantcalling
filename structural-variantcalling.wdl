@@ -115,7 +115,7 @@ workflow SVcalling {
             indexedFiteredBam = FilterShortReadsBam.filteredBamIndex,
             bwaIndex = bwaIndex,
             predictions = clever.predictions,
-            outputPath = SVdir + 'clever/'
+            outputPath = SVdir + 'mateclever/'
     }
 
     call manta.Germline as manta {
@@ -156,7 +156,7 @@ workflow SVcalling {
                     dockerImage = dockerImages["bcftools"],
                     inputFile = renameSample.renamedVcf,
                     outputPath = prefix + '.sorted.vcf',
-                    tmpDir = SVdir + 'tmp-' + sample + "." + pair.right
+                    tmpDir = SVdir + 'tmp-' + sample + "." + svtype + "." + pair.right
             }
 
             call bcftools.Annotate as setId {
@@ -193,7 +193,7 @@ workflow SVcalling {
                 call bcftools.View as removeMisHomRR {
                     input:
                     dockerImage = dockerImages["bcftools"],
-                    inputFile = select_first([setId.outputVcf, removeFpDupDel.outputVcf]),
+                    inputFile = select_first([removeFpDupDel.outputVcf, setId.outputVcf]),
                     outputPath = prefix + '.GT_filtered.vcf',
                     excludeUncalled = true,
                     exclude = "'GT=\"RR\"'"
@@ -221,7 +221,8 @@ workflow SVcalling {
     }
 
     output {
-        File cleverVcf = mateclever.matecleverVcf
+        File cleverVcf = clever.predictions
+        File mateCleverVcf = mateclever.matecleverVcf
         File mantaVcf = manta.mantaVCF
         File dellyVcf = delly2vcf.outputVcf
         File smooveVcf = smoove.smooveVcf
