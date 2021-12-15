@@ -10,6 +10,8 @@ that users understand how the changes affect the new version.
 -->
 version 1.3.0-dev
 ---------------------
++ Fix order of input VCF files when removing missing and homozygous reference genotypes.
++ Each SV type has now seperate temporary directory during sorting.
 + Both union and intersection from each SV types are generated. 
 + The pipeline now first seperate SVs by types before merging.
 + Duphold can now be run optionally to annotate and remove FP deletions and duplications.
