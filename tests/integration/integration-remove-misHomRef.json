@@ -16,6 +16,8 @@
         "tests/data/reference/bwa/reference.fasta.fai"
     ]
   },
-  "SVcalling.excludeMisHomRef": true
+  "SVcalling.excludeMisHomRef": true,
+  "SVcalling.gridss.jvmHeapSizeGb": "8G"
+
 }
 
