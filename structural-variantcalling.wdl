@@ -28,6 +28,7 @@ import "tasks/clever.wdl" as clever
 import "tasks/common.wdl" as common
 import "tasks/delly.wdl" as delly
 import "tasks/duphold.wdl" as duphold
+import "tasks/gridss.wdl" as gridssTasks
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
@@ -128,6 +129,15 @@ workflow SVcalling {
             runDir = SVdir + 'manta/'
     }
 
+    call gridssTasks.GRIDSS as gridss {
+        input:
+            tumorBam = bamFile,
+            tumorBai = bamIndex,
+            tumorLabel = sample,
+            reference = bwaIndex,
+            outputPrefix = SVdir + "gridss/~{sample}.gridss"
+    }
+
     Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
        (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
 
@@ -225,9 +235,12 @@ workflow SVcalling {
         File mantaVcf = manta.mantaVCF
         File dellyVcf = delly2vcf.outputVcf
         File smooveVcf = smoove.smooveVcf
+        File gridssVcf = gridss.vcf
+        File gridssVcfIndex = gridss.vcfIndex
         Array[Array[File]] modifiedVcfs = toBeMergedVcfs
         Array[File] unionVCFs = survivor.mergedVcf
         Array[File] isecVCFs = getIntersections.outputVcf
+
     }
 
     parameter_meta {
