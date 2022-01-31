@@ -16,6 +16,6 @@
         "tests/data/reference/bwa/reference.fasta.fai"
     ]
   },
-  "SVcalling.gridss.jvmHeapSizeGb": "8G"
+  "SVcalling.gridss.jvmHeapSizeGb": 8
 }
 

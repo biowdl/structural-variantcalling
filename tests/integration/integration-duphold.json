@@ -17,6 +17,6 @@
     ]
   },
   "SVcalling.runDupHold": true,
-  "SVcalling.gridss.jvmHeapSizeGb": "8G"
+  "SVcalling.gridss.jvmHeapSizeGb": 8
 }
 
