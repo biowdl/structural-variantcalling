@@ -57,7 +57,8 @@ workflow SVcalling {
             "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2",
             "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0",
             "smoove": "quay.io/biocontainers/smoove:0.2.5--0",
-            "duphold": "quay.io/biocontainers/duphold:0.2.1--h516909a_1"
+            "duphold": "quay.io/biocontainers/duphold:0.2.1--h516909a_1",
+            "gridss": "quay.io/biowdl/gridss:2.12.2"
         }
     }
 
@@ -131,6 +132,7 @@ workflow SVcalling {
 
     call gridssTasks.GRIDSS as gridss {
         input:
+            dockerImage = dockerImages["gridss"],
             tumorBam = bamFile,
             tumorBai = bamIndex,
             tumorLabel = sample,
