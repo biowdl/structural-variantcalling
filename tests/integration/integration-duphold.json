@@ -16,6 +16,7 @@
         "tests/data/reference/bwa/reference.fasta.fai"
     ]
   },
-  "SVcalling.runDupHold": true
+  "SVcalling.runDupHold": true,
+  "SVcalling.gridss.jvmHeapSizeGb": 8
 }
 

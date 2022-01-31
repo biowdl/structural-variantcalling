@@ -28,6 +28,7 @@ import "tasks/clever.wdl" as clever
 import "tasks/common.wdl" as common
 import "tasks/delly.wdl" as delly
 import "tasks/duphold.wdl" as duphold
+import "tasks/gridss.wdl" as gridssTasks
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
@@ -56,7 +57,8 @@ workflow SVcalling {
             "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2",
             "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0",
             "smoove": "quay.io/biocontainers/smoove:0.2.5--0",
-            "duphold": "quay.io/biocontainers/duphold:0.2.1--h516909a_1"
+            "duphold": "quay.io/biocontainers/duphold:0.2.1--h516909a_1",
+            "gridss": "quay.io/biowdl/gridss:2.12.2"
         }
     }
 
@@ -126,6 +128,16 @@ workflow SVcalling {
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
             runDir = SVdir + 'manta/'
+    }
+
+    call gridssTasks.GRIDSS as gridss {
+        input:
+            dockerImage = dockerImages["gridss"],
+            tumorBam = bamFile,
+            tumorBai = bamIndex,
+            tumorLabel = sample,
+            reference = bwaIndex,
+            outputPrefix = SVdir + "gridss/~{sample}.gridss"
     }
 
     Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
@@ -226,9 +238,12 @@ workflow SVcalling {
         File mantaVcf = manta.mantaVCF
         File dellyVcf = delly2vcf.outputVcf
         File smooveVcf = smoove.smooveVcf
+        File gridssVcf = gridss.vcf
+        File gridssVcfIndex = gridss.vcfIndex
         Array[Array[File]] modifiedVcfs = toBeMergedVcfs
         Array[File] unionVCFs = survivor.mergedVcf
         Array[File] isecVCFs = getIntersections.outputVcf
+
     }
 
     parameter_meta {
