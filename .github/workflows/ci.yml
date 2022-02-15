@@ -14,12 +14,28 @@ defaults:
     shell: bash -l {0}
 
 jobs:
+  get_workflow_tests:
+    runs-on: ubuntu-latest
+    outputs:
+      test_list: ${{ steps.get_tests.outputs.tests }}
+    steps:
+      - uses: actions/checkout@v2.3.4 # https://github.com/actions/checkout.
+        with:  # Use fastest possible checkout.
+          submodules: false
+          fetch-depth: 1
+      - id: get_tests
+        run: |
+          # Remove all whitespace first
+          TESTS="$(cat ci_tests.json | tr -d '\r\n\t ')"
+          echo "$TESTS"
+          echo "::set-output name=tests::$TESTS"
   test:
+    needs: 
+      - get_workflow_tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test:
-          - structural-variantcalling
+        test: ${{fromJson(needs.get_workflow_tests.outputs.test_list)}}
     steps:
       - uses: actions/checkout@v2.3.4 # https://github.com/actions/checkout.
         with:
