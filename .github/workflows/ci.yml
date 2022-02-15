@@ -1,55 +1,73 @@
-name: Continuous integration
+name: Continuous Integration
 
-on: 
+on:
   pull_request:
     paths:
-      - "**.wdl"  # Workflow files and task 
-      - "**.yml"  # Ci configuration, tests and docker images 
+      - "**.wdl"  # Workflow files and task.
+      - "**.yml"  # Ci configuration, tests and docker images.
       - "!docs/**"
 
 defaults:
   run:
     # This is needed for miniconda, see:
-    # https://github.com/marketplace/actions/setup-miniconda#important
-    shell: bash -l {0}  
+    # https://github.com/marketplace/actions/setup-miniconda#important.
+    shell: bash -l {0}
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    name: Womtool validate and submodule up to date.
-    steps:
-      - uses: actions/checkout@v2.3.4
-        with:
-          submodules: recursive
-      - name: install miniconda
-        uses: conda-incubator/setup-miniconda@v2.0.1
-        with:
-          channels: conda-forge,bioconda,defaults
-        # Conda-incubator uses 'test' environment by default.
-      - name: install requirements
-        run: conda install -n test cromwell miniwdl wdl-aid
-      - name: run linting
-        run: bash scripts/biowdl_lint.sh
   test:
-    needs: lint  # Don't start testing before the lint has succeeded.
     runs-on: ubuntu-latest
     strategy:
       matrix:
         test:
           - structural-variantcalling
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.3.4 # https://github.com/actions/checkout.
         with:
           submodules: recursive
+      - name: Set cache date
+        run: echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+      
+      - name: Cache conda environment
+        # Use an always upload cache to prevent solving conda environment again and again on failing linting.
+        uses: pat-s/always-upload-cache@v2.1.5
+        env:
+          # Increase this value to manually invalidate the cache
+          CACHE_NUMBER: 0
+        with:
+          path: /usr/share/miniconda/envs/workflow-test
+          key:
+            ${{runner.os}}-workflow-test-${{ env.CACHE_NUMBER }}-${{env.DATE}}-${{ hashFiles('requirements-test.txt') }}
+        id: env_cache
+
+      # Use the builtin conda. This is the fastest installation. It may not be
+      # the fastest for resolving, but the package cache mitigates that problem.
+      # Since this installs fastest, it is fastest for all runs where a cache
+      # hit occurs.
       - name: install miniconda
-        uses: conda-incubator/setup-miniconda@v2.0.1
+        uses: conda-incubator/setup-miniconda@v2.1.1
         with:
           channels: conda-forge,bioconda,defaults
-      - name: install requirements
-        run: conda install -n test --file requirements-test.txt
-      - name: Run test
+          channel-priority: strict
+          auto-activate-base: false
+          use-only-tar-bz2: true  # Needed for proper caching according to the documentation.
+        # activate-environment is broken! This always seems to create a new environment.
+        # Activation is therefore done separately.    
+
+      - name: Create test environment if no cache is present
+        run: |
+          conda create -n workflow-test
+          conda install -n workflow-test --file requirements-test.txt
+        if: steps.env_cache.outputs.cache-hit != 'true'
+      
+      - name: Activate test environment
+        # The new PATH should be passed to the environment, otherwise it won't register.
+        run: |
+          conda activate workflow-test
+          echo "PATH=$PATH" >> $GITHUB_ENV
+
+      - name: Run test.
         run: pytest --keep-workflow-wd-on-fail --tag ${{ matrix.test }} tests/
-      - name: Check logs in case of failure
+      - name: Check logs in case of failure.
         if: ${{ failure() }}
         # Get the last 1000 lines of the cromwell log to catch the error.
         run: bash -c 'tail -n 1000 /tmp/pytest_workflow_*/*/log.out'
