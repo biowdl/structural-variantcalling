@@ -24,16 +24,16 @@ version 1.0
 
 import "tasks/bcftools.wdl" as bcftools
 import "tasks/bwa.wdl" as bwa
-import "tasks/clever.wdl" as clever
+import "tasks/clever.wdl" as cleverTasks
 import "tasks/common.wdl" as common
-import "tasks/delly.wdl" as delly
-import "tasks/duphold.wdl" as duphold
+import "tasks/delly.wdl" as dellyTasks
+import "tasks/duphold.wdl" as dupholdTasks
 import "tasks/gridss.wdl" as gridssTasks
-import "tasks/manta.wdl" as manta
+import "tasks/manta.wdl" as mantaTasks
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
-import "tasks/smoove.wdl" as smoove
-import "tasks/survivor.wdl" as survivor
+import "tasks/smoove.wdl" as smooveTasks
+import "tasks/survivor.wdl" as survivorTasks
 
 workflow SVcalling {
     input {
@@ -66,7 +66,7 @@ workflow SVcalling {
 
     String SVdir = outputDir + '/structural-variants/'
 	
-    call smoove.Call as smoove {
+    call smooveTasks.Call as smoove {
         input:
             dockerImage = dockerImages["smoove"],
             bamFile = bamFile,
@@ -77,7 +77,7 @@ workflow SVcalling {
             outputDir = SVdir + 'smoove'
     }   
 
-    call delly.CallSV as delly {
+    call dellyTasks.CallSV as delly {
         input:
             dockerImage = dockerImages["delly"],
             bamFile = bamFile,
@@ -94,7 +94,7 @@ workflow SVcalling {
             outputPath = SVdir + 'delly/' + sample + ".delly.vcf"
     } 
 
-    call clever.Prediction as clever {
+    call cleverTasks.Prediction as clever {
         input:
             dockerImage = dockerImages["clever"],
             bamFile = bamFile,
@@ -110,7 +110,7 @@ workflow SVcalling {
             outputPathBam = SVdir + 'filteredBam/' + sample + ".filtered.bam"
     }
 
-    call clever.Mateclever as mateclever {
+    call cleverTasks.Mateclever as mateclever {
         input:
             dockerImage = dockerImages["clever"],
             fiteredBam = FilterShortReadsBam.filteredBam,
@@ -120,7 +120,7 @@ workflow SVcalling {
             outputPath = SVdir + 'mateclever/'
     }
 
-    call manta.Germline as manta {
+    call mantaTasks.Germline as manta {
         input:
             dockerImage = dockerImages["manta"],
             bamFile = bamFile,
@@ -180,7 +180,7 @@ workflow SVcalling {
             }
 
             if (runDupHold) {
-                call duphold.Duphold as annotateDH {
+                call dupholdTasks.Duphold as annotateDH {
                     input:
                         dockerImage = dockerImages["duphold"],
                         inputVcf = setId.outputVcf,
@@ -215,7 +215,7 @@ workflow SVcalling {
             File toBeMergedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
          }
 
-        call survivor.Merge as survivor {
+        call survivorTasks.Merge as survivor {
             input:
                 dockerImage = dockerImages["survivor"],
                 filePaths = toBeMergedVcfs,
