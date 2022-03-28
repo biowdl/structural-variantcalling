@@ -260,9 +260,10 @@ workflow SVcalling {
         bamIndex: {description: "BAM index(.bai) file", category: "required"}
         bwaIndex: {description: "Struct containing the BWA reference files", category: "required"}
         sample: {description: "The name of the sample", category: "required"}
-        runDupHold: {description: "Option to run duphold annotation and filter FP deletions and duplications.", category: "advance"}
-        excludeMisHomRef: {description: "Option to exclude missing and homozygous reference genotypes.", category: "advance"}
-        svtypes: {descriptiom: "List of svtypes to be further processed and output by the pipeline.", category: "advance"}
+        runDupHold: {description: "Option to run duphold annotation and filter FP deletions and duplications.", category: "advanced"}
+        runSmoove: {description: "Whether or not to run smoove.", category: "advanced"}
+        excludeMisHomRef: {description: "Option to exclude missing and homozygous reference genotypes.", category: "advanced"}
+        svtypes: {description: "List of svtypes to be further processed and output by the pipeline.", category: "advanced"}
         dockerImages: {description: "A map describing the docker image used for the tasks.",
                            category: "advanced"}
     }
