@@ -47,6 +47,7 @@ workflow SVcalling {
         Array[String] svtypes = ["DEL", "DUP", "INS", "INV", "BND"]
         Boolean excludeMisHomRef = false
         Boolean runDupHold = false
+        Boolean runSmoove = true
         String outputDir = "."
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
@@ -66,16 +67,20 @@ workflow SVcalling {
 
     String SVdir = outputDir + '/structural-variants/'
 	
-    call smoove.Call as smoove {
-        input:
-            dockerImage = dockerImages["smoove"],
-            bamFile = bamFile,
-            bamIndex = bamIndex,
-            referenceFasta = referenceFasta,
-            referenceFastaFai = referenceFastaFai,
-            sample = sample,
-            outputDir = SVdir + 'smoove'
-    }   
+    if (runSmoove) {
+        call smoove.Call as smoove {
+            input:
+                dockerImage = dockerImages["smoove"],
+                bamFile = bamFile,
+                bamIndex = bamIndex,
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                sample = sample,
+                outputDir = SVdir + 'smoove'
+        }
+
+        Pair[File, String] smooveVcfAndCaller = (smoove.smooveVcf, "smoove")
+    }
 
     call delly.CallSV as delly {
         input:
@@ -140,8 +145,8 @@ workflow SVcalling {
             outputPrefix = SVdir + "gridss/~{sample}.gridss"
     }
 
-    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
-       (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
+    Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"), 
+        (manta.mantaVCF, "manta"), (mateclever.matecleverVcf, "clever"), smooveVcfAndCaller])
 
     scatter (svtype in svtypes) {
          scatter (pair in vcfAndCaller) {
@@ -237,7 +242,7 @@ workflow SVcalling {
         File mateCleverVcf = mateclever.matecleverVcf
         File mantaVcf = manta.mantaVCF
         File dellyVcf = delly2vcf.outputVcf
-        File smooveVcf = smoove.smooveVcf
+        File? smooveVcf = smoove.smooveVcf
         File gridssVcf = gridss.vcf
         File gridssVcfIndex = gridss.vcfIndex
         Array[Array[File]] modifiedVcfs = toBeMergedVcfs
@@ -255,9 +260,10 @@ workflow SVcalling {
         bamIndex: {description: "BAM index(.bai) file", category: "required"}
         bwaIndex: {description: "Struct containing the BWA reference files", category: "required"}
         sample: {description: "The name of the sample", category: "required"}
-        runDupHold: {description: "Option to run duphold annotation and filter FP deletions and duplications.", category: "advance"}
-        excludeMisHomRef: {description: "Option to exclude missing and homozygous reference genotypes.", category: "advance"}
-        svtypes: {descriptiom: "List of svtypes to be further processed and output by the pipeline.", category: "advance"}
+        runDupHold: {description: "Option to run duphold annotation and filter FP deletions and duplications.", category: "advanced"}
+        runSmoove: {description: "Whether or not to run smoove.", category: "advanced"}
+        excludeMisHomRef: {description: "Option to exclude missing and homozygous reference genotypes.", category: "advanced"}
+        svtypes: {description: "List of svtypes to be further processed and output by the pipeline.", category: "advanced"}
         dockerImages: {description: "A map describing the docker image used for the tasks.",
                            category: "advanced"}
     }
