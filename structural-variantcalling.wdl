@@ -79,7 +79,7 @@ workflow SVcalling {
                 outputDir = SVdir + 'smoove'
         }
 
-        Pair smooveVcfAndCaller = (smoove.smooveVcf, "smoove")
+        Pair[File, String] smooveVcfAndCaller = (smoove.smooveVcf, "smoove")
     }
 
     call delly.CallSV as delly {
