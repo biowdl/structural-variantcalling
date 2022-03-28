@@ -47,6 +47,7 @@ workflow SVcalling {
         Array[String] svtypes = ["DEL", "DUP", "INS", "INV", "BND"]
         Boolean excludeMisHomRef = false
         Boolean runDupHold = false
+        Boolean runSmoove = true
         String outputDir = "."
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
@@ -66,16 +67,20 @@ workflow SVcalling {
 
     String SVdir = outputDir + '/structural-variants/'
 	
-    call smoove.Call as smoove {
-        input:
-            dockerImage = dockerImages["smoove"],
-            bamFile = bamFile,
-            bamIndex = bamIndex,
-            referenceFasta = referenceFasta,
-            referenceFastaFai = referenceFastaFai,
-            sample = sample,
-            outputDir = SVdir + 'smoove'
-    }   
+    if (runSmoove) {
+        call smoove.Call as smoove {
+            input:
+                dockerImage = dockerImages["smoove"],
+                bamFile = bamFile,
+                bamIndex = bamIndex,
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                sample = sample,
+                outputDir = SVdir + 'smoove'
+        }
+
+        Pair smooveVcfAndCaller = (smoove.smooveVcf, "smoove")
+    }
 
     call delly.CallSV as delly {
         input:
@@ -140,8 +145,8 @@ workflow SVcalling {
             outputPrefix = SVdir + "gridss/~{sample}.gridss"
     }
 
-    Array[Pair[File,String]] vcfAndCaller = [(delly2vcf.outputVcf, "delly"),(manta.mantaVCF,"manta"), 
-       (mateclever.matecleverVcf, "clever"),(smoove.smooveVcf,"smoove")]
+    Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"), 
+        (manta.mantaVCF, "manta"), (mateclever.matecleverVcf, "clever"), smooveVcfAndCaller])
 
     scatter (svtype in svtypes) {
          scatter (pair in vcfAndCaller) {
@@ -237,7 +242,7 @@ workflow SVcalling {
         File mateCleverVcf = mateclever.matecleverVcf
         File mantaVcf = manta.mantaVCF
         File dellyVcf = delly2vcf.outputVcf
-        File smooveVcf = smoove.smooveVcf
+        File? smooveVcf = smoove.smooveVcf
         File gridssVcf = gridss.vcf
         File gridssVcfIndex = gridss.vcfIndex
         Array[Array[File]] modifiedVcfs = toBeMergedVcfs

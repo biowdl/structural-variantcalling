@@ -10,6 +10,7 @@ that users understand how the changes affect the new version.
 -->
 version 1.3.0-dev
 ---------------------
++ Smoove can now be disabled, by setting `SVcalling.runSmoove` to `false`.
 + Added Gridss as SV caller.
 + Fix order of input VCF files when removing missing and homozygous reference genotypes.
 + Each SV type has now seperate temporary directory during sorting.
