@@ -145,7 +145,7 @@ workflow SVcalling {
             outputPrefix = SVdir + "gridss/~{sample}.gridss"
     }
 
-    call gridssTasks.AnnotateSvTypes as gridssSvtyped {
+    call gridssTasks.AnnotateSvTypes as gridssSvTyped {
         input:
             gridssVcf = gridss.vcf,
             gridssVcfIndex = gridss.vcfIndex,
