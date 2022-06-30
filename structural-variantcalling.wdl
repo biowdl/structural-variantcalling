@@ -149,7 +149,7 @@ workflow SVcalling {
         input:
             gridssVcf = gridss.vcf,
             gridssVcfIndex = gridss.vcfIndex,
-            outputPath = SVdir + "gridss/~{sample}.gridss.svtyped.vcf"
+            outputPath = SVdir + "gridss/~{sample}.gridss.svtyped.vcf.bgz"
     }
 
     Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"),
