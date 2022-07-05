@@ -145,8 +145,16 @@ workflow SVcalling {
             outputPrefix = SVdir + "gridss/~{sample}.gridss"
     }
 
-    Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"), 
-        (manta.mantaVCF, "manta"), (mateclever.matecleverVcf, "clever"), smooveVcfAndCaller])
+    call gridssTasks.AnnotateSvTypes as gridssSvTyped {
+        input:
+            gridssVcf = gridss.vcf,
+            gridssVcfIndex = gridss.vcfIndex,
+            outputPath = SVdir + "gridss/~{sample}.gridss.svtyped.vcf.bgz"
+    }
+
+    Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"),
+        (manta.mantaVCF, "manta"), (mateclever.matecleverVcf, "clever"), smooveVcfAndCaller,
+        (gridssSvTyped.vcf, "gridss")])
 
     scatter (svtype in svtypes) {
          scatter (pair in vcfAndCaller) {
