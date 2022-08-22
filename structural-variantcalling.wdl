@@ -157,7 +157,7 @@ workflow SVcalling {
         (gridssSvTyped.vcf, "gridss")])
 
     scatter (svtype in svtypes) {
-         scatter (pair in vcfAndCaller) {
+        scatter (pair in vcfAndCaller) {
             String prefix = SVdir + pair.right + '/' + svtype
 
             call bcftools.View as getSVtype {
@@ -192,7 +192,7 @@ workflow SVcalling {
                     newId = "'${pair.right}\\_%CHROM\\_%POS\\_%END'"
             }
 
-            if (runDupHold) {
+            if (runDupHold && (svtype == "DEL" || svtype == "DUP")) {
                 call duphold.Duphold as annotateDH {
                     input:
                         dockerImage = dockerImages["duphold"],
@@ -226,7 +226,7 @@ workflow SVcalling {
             }
 
             File toBeMergedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
-         }
+        }
 
         call survivor.Merge as survivor {
             input:
