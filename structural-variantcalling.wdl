@@ -56,7 +56,7 @@ workflow SVcalling {
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "picard":"quay.io/biocontainers/picard:2.23.2--0",
             "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2",
-            "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0",
+            "survivor": "quay.io/biocontainers/survivor:1.0.7--hd03093a_2",
             "smoove": "quay.io/biocontainers/smoove:0.2.5--0",
             "duphold": "quay.io/biocontainers/duphold:0.2.1--h516909a_1",
             "gridss": "quay.io/biowdl/gridss:2.12.2"
