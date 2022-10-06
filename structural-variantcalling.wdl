@@ -125,6 +125,16 @@ workflow SVcalling {
             outputPath = SVdir + 'mateclever/'
     }
 
+    # Survivor will parse the SVLEN incorrectly if it's the first value in INFO
+    # This will lead to it miscalculating the END value and thus merging SVs
+    # incorrectly. This workaround adds a meaningless value to the start of INFO
+    # if the first value is SVLEN.
+    call CleverWorkaround as cleverWorkaround {
+        input:
+            vcf = mateclever.matecleverVcf,
+            outputPath = SVdir + 'mateclever/workaround.vcf'
+    }
+
     call manta.Germline as manta {
         input:
             dockerImage = dockerImages["manta"],
@@ -153,8 +163,7 @@ workflow SVcalling {
     }
 
     Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"),
-        (manta.mantaVCF, "manta"), (mateclever.matecleverVcf, "clever"), smooveVcfAndCaller,
-        (gridssSvTyped.vcf, "gridss")])
+        (manta.mantaVCF, "manta"), (cleverWorkaround.workaroundVcf, "clever"), smooveVcfAndCaller])
 
     scatter (svtype in svtypes) {
         scatter (pair in vcfAndCaller) {
@@ -274,5 +283,32 @@ workflow SVcalling {
         svtypes: {description: "List of svtypes to be further processed and output by the pipeline.", category: "advanced"}
         dockerImages: {description: "A map describing the docker image used for the tasks.",
                            category: "advanced"}
+    }
+}
+
+
+task CleverWorkaround {
+    input {
+        File vcf
+        String outputPath
+    }
+
+    command {
+        sed 's/\tSVLEN=/\tWORKAROUND;SVLEN=/' ~{vcf} > ~{outputPath}
+    }
+
+    output {
+        File workaroundVcf = outputPath
+    }
+
+    runtime {
+        memory: "4GiB"
+        time_minutes: 30
+        docker: "ubuntu:22.04"
+    }
+
+    parameter_meta {
+        vcf: {description: "The vcf to apply the workaround to.", category: "required"}
+        outputPath: {description: "The path to write the output to.", category: "required"}
     }
 }
