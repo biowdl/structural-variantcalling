@@ -294,6 +294,8 @@ task CleverWorkaround {
     }
 
     command {
+        set -e
+        mkdir -p $(dirname ~{outputPath})
         sed 's/\tSVLEN=/\tWORKAROUND;SVLEN=/' ~{vcf} > ~{outputPath}
     }
 
