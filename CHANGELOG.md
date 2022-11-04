@@ -10,7 +10,11 @@ that users understand how the changes affect the new version.
 -->
 version 1.3.0-dev
 ---------------------
-+ The gridss outputs are now included in survivor as well.
++ Fixed a bug which led to the removal of all BND, INS and INV events if DUPHOLD was enabled.
++ Updated SURVIVOR version to 1.0.7.
++ Added a workaround for a bug in survivor which caused the END of events detected by CLEVER to be calculated
+  incorrectly resulting in incorrect merging of events. 
++ ~~The gridss outputs are now included in survivor as well.~~
 + Smoove can now be disabled, by setting `SVcalling.runSmoove` to `false`.
 + Added Gridss as SV caller.
 + Fix order of input VCF files when removing missing and homozygous reference genotypes.
