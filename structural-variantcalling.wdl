@@ -293,6 +293,11 @@ task CleverWorkaround {
         String outputPath
     }
 
+    # This adds a meaningless field to the start of the INFO column if
+    # the first field if SVLEN. This is done to work around a bug in 
+    # survivor. Technically this isn't VCF spec compliant, since no new
+    # header is added for this INFO field. But since this is only used
+    # for survivor (which ignoes headers), that's not a problem.
     command {
         set -e
         mkdir -p $(dirname ~{outputPath})
