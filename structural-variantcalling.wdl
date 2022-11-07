@@ -56,7 +56,7 @@ workflow SVcalling {
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "picard":"quay.io/biocontainers/picard:2.23.2--0",
             "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2",
-            "survivor": "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0",
+            "survivor": "quay.io/biocontainers/survivor:1.0.7--hd03093a_2",
             "smoove": "quay.io/biocontainers/smoove:0.2.5--0",
             "duphold": "quay.io/biocontainers/duphold:0.2.1--h516909a_1",
             "gridss": "quay.io/biowdl/gridss:2.12.2"
@@ -125,6 +125,16 @@ workflow SVcalling {
             outputPath = SVdir + 'mateclever/'
     }
 
+    # Survivor will parse the SVLEN incorrectly if it's the first value in INFO
+    # This will lead to it miscalculating the END value and thus merging SVs
+    # incorrectly. This workaround adds a meaningless value to the start of INFO
+    # if the first value is SVLEN.
+    call CleverWorkaround as cleverWorkaround {
+        input:
+            vcf = mateclever.matecleverVcf,
+            outputPath = SVdir + 'mateclever/workaround.vcf'
+    }
+
     call manta.Germline as manta {
         input:
             dockerImage = dockerImages["manta"],
@@ -153,11 +163,10 @@ workflow SVcalling {
     }
 
     Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"),
-        (manta.mantaVCF, "manta"), (mateclever.matecleverVcf, "clever"), smooveVcfAndCaller,
-        (gridssSvTyped.vcf, "gridss")])
+        (manta.mantaVCF, "manta"), (cleverWorkaround.workaroundVcf, "clever"), smooveVcfAndCaller])
 
     scatter (svtype in svtypes) {
-         scatter (pair in vcfAndCaller) {
+        scatter (pair in vcfAndCaller) {
             String prefix = SVdir + pair.right + '/' + svtype
 
             call bcftools.View as getSVtype {
@@ -192,7 +201,7 @@ workflow SVcalling {
                     newId = "'${pair.right}\\_%CHROM\\_%POS\\_%END'"
             }
 
-            if (runDupHold) {
+            if (runDupHold && (svtype == "DEL" || svtype == "DUP")) {
                 call duphold.Duphold as annotateDH {
                     input:
                         dockerImage = dockerImages["duphold"],
@@ -226,7 +235,7 @@ workflow SVcalling {
             }
 
             File toBeMergedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
-         }
+        }
 
         call survivor.Merge as survivor {
             input:
@@ -274,5 +283,39 @@ workflow SVcalling {
         svtypes: {description: "List of svtypes to be further processed and output by the pipeline.", category: "advanced"}
         dockerImages: {description: "A map describing the docker image used for the tasks.",
                            category: "advanced"}
+    }
+}
+
+
+task CleverWorkaround {
+    input {
+        File vcf
+        String outputPath
+    }
+
+    # This adds a meaningless field to the start of the INFO column if
+    # the first field if SVLEN. This is done to work around a bug in 
+    # survivor. Technically this isn't VCF spec compliant, since no new
+    # header is added for this INFO field. But since this is only used
+    # for survivor (which ignoes headers), that's not a problem.
+    command {
+        set -e
+        mkdir -p $(dirname ~{outputPath})
+        sed 's/\tSVLEN=/\tWORKAROUND;SVLEN=/' ~{vcf} > ~{outputPath}
+    }
+
+    output {
+        File workaroundVcf = outputPath
+    }
+
+    runtime {
+        memory: "4GiB"
+        time_minutes: 30
+        docker: "ubuntu:22.04"
+    }
+
+    parameter_meta {
+        vcf: {description: "The vcf to apply the workaround to.", category: "required"}
+        outputPath: {description: "The path to write the output to.", category: "required"}
     }
 }
