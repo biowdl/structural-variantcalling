@@ -125,16 +125,6 @@ workflow SVcalling {
             outputPath = SVdir + 'mateclever/'
     }
 
-    # Survivor will parse the SVLEN incorrectly if it's the first value in INFO
-    # This will lead to it miscalculating the END value and thus merging SVs
-    # incorrectly. This workaround adds a meaningless value to the start of INFO
-    # if the first value is SVLEN.
-    call CleverWorkaround as cleverWorkaround {
-        input:
-            vcf = mateclever.matecleverVcf,
-            outputPath = SVdir + 'mateclever/workaround.vcf'
-    }
-
     call manta.Germline as manta {
         input:
             dockerImage = dockerImages["manta"],
@@ -163,7 +153,7 @@ workflow SVcalling {
     }
 
     Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"),
-        (manta.mantaVCF, "manta"), (cleverWorkaround.workaroundVcf, "clever"), smooveVcfAndCaller])
+        (manta.mantaVCF, "manta"), (mateclever.matecleverVcf, "clever"), smooveVcfAndCaller])
 
     scatter (svtype in svtypes) {
         scatter (pair in vcfAndCaller) {
@@ -234,7 +224,19 @@ workflow SVcalling {
                 }
             }
 
-            File toBeMergedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
+            # Survivor will parse the SVLEN incorrectly if it's the first value in INFO
+            # This will lead to it miscalculating the END value and thus merging SVs
+            # incorrectly. This workaround adds a meaningless value to the start of INFO
+            # if the first value is SVLEN.
+            if (pair.right == "clever") {
+                call CleverWorkaround as cleverWorkaround {
+                    input:
+                        vcf = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf]),
+                        outputPath = prefix + '.workaround.vcf'
+                }
+            }
+
+            File toBeMergedVcfs = select_first([cleverWorkaround.workaroundVcf, removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
         }
 
         call survivor.Merge as survivor {
