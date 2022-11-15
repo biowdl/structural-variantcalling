@@ -6,13 +6,12 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/integration.json structural-variantcalling.wdl
   files:
-    - path: "test-output/structural-variants/clever/DEL.changed_id.vcf"
     - path: "test-output/structural-variants/manta/DEL.changed_id.vcf"
     - path: "test-output/structural-variants/smoove/DEL.changed_id.vcf"
     - path: "test-output/structural-variants/delly/DEL.changed_id.vcf"
+    - path: "test-output/structural-variants/gridss/DEL.changed_id.vcf"
     - path: "test-output/structural-variants/survivor/DEL.union.vcf"
     - path: "test-output/structural-variants/survivor/DEL.isec.vcf"
-    - path: "test-output/structural-variants/gridss/sample.gridss.vcf.gz"
 
 - name: structural-variantcalling-remove-misHomRef
   tags:
@@ -26,9 +25,9 @@
     - path: "test-output/structural-variants/manta/DEL.GT_filtered.vcf"
     - path: "test-output/structural-variants/smoove/DEL.GT_filtered.vcf"
     - path: "test-output/structural-variants/delly/DEL.GT_filtered.vcf"
+    - path: "test-output/structural-variants/gridss/DEL.GT_filtered.vcf"
     - path: "test-output/structural-variants/survivor/DEL.union.vcf"
     - path: "test-output/structural-variants/survivor/DEL.isec.vcf"
-    - path: "test-output/structural-variants/gridss/sample.gridss.vcf.gz"
 
 - name: structural-variantcalling-duphold
   tags:
@@ -42,6 +41,6 @@
     - path: "test-output/structural-variants/manta/DEL.duphold_filtered.vcf"
     - path: "test-output/structural-variants/smoove/DEL.duphold_filtered.vcf"
     - path: "test-output/structural-variants/delly/DEL.duphold_filtered.vcf"
+    - path: "test-output/structural-variants/gridss/DEL.duphold_filtered.vcf"
     - path: "test-output/structural-variants/survivor/DEL.union.vcf"
     - path: "test-output/structural-variants/survivor/DEL.isec.vcf"
-    - path: "test-output/structural-variants/gridss/sample.gridss.vcf.gz"

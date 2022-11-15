@@ -17,6 +17,7 @@
     ]
   },
   "SVcalling.excludeMisHomRef": true,
+  "SVcalling.runClever": true,
   "SVcalling.gridss.jvmHeapSizeGb": 8
 
 }
