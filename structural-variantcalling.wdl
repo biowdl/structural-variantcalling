@@ -158,7 +158,7 @@ workflow SVcalling {
     }
 
     Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"),
-        (manta.mantaVCF, "manta"), cleverVcfAndCaller, smooveVcfAndCaller, (gridssSvTyped.vcf. "gridss")])
+        (manta.mantaVCF, "manta"), cleverVcfAndCaller, smooveVcfAndCaller, (gridssSvTyped.vcf, "gridss")])
 
     scatter (svtype in svtypes) {
         scatter (pair in vcfAndCaller) {
