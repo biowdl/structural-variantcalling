@@ -48,6 +48,7 @@ workflow SVcalling {
         Boolean excludeMisHomRef = false
         Boolean runDupHold = false
         Boolean runSmoove = true
+        Boolean runClever = false
         String outputDir = "."
         Map[String, String] dockerImages = {
             "bcftools": "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2",
@@ -99,40 +100,34 @@ workflow SVcalling {
             outputPath = SVdir + 'delly/' + sample + ".delly.vcf"
     } 
 
-    call clever.Prediction as clever {
-        input:
-            dockerImage = dockerImages["clever"],
-            bamFile = bamFile,
-            bamIndex = bamIndex,
-            bwaIndex = bwaIndex,
-            outputPath = SVdir + 'clever/'
-    } 
-    
-    call samtools.FilterShortReadsBam {
-        input:
-            dockerImage = dockerImages["samtools"],
-            bamFile = bamFile,
-            outputPathBam = SVdir + 'filteredBam/' + sample + ".filtered.bam"
-    }
+    if (runClever) {
+        call clever.Prediction as clever {
+            input:
+                dockerImage = dockerImages["clever"],
+                bamFile = bamFile,
+                bamIndex = bamIndex,
+                bwaIndex = bwaIndex,
+                outputPath = SVdir + 'clever/'
+        }
 
-    call clever.Mateclever as mateclever {
-        input:
-            dockerImage = dockerImages["clever"],
-            fiteredBam = FilterShortReadsBam.filteredBam,
-            indexedFiteredBam = FilterShortReadsBam.filteredBamIndex,
-            bwaIndex = bwaIndex,
-            predictions = clever.predictions,
-            outputPath = SVdir + 'mateclever/'
-    }
+        call samtools.FilterShortReadsBam {
+            input:
+                dockerImage = dockerImages["samtools"],
+                bamFile = bamFile,
+                outputPathBam = SVdir + 'filteredBam/' + sample + ".filtered.bam"
+        }
 
-    # Survivor will parse the SVLEN incorrectly if it's the first value in INFO
-    # This will lead to it miscalculating the END value and thus merging SVs
-    # incorrectly. This workaround adds a meaningless value to the start of INFO
-    # if the first value is SVLEN.
-    call CleverWorkaround as cleverWorkaround {
-        input:
-            vcf = mateclever.matecleverVcf,
-            outputPath = SVdir + 'mateclever/workaround.vcf'
+        call clever.Mateclever as mateclever {
+            input:
+                dockerImage = dockerImages["clever"],
+                fiteredBam = FilterShortReadsBam.filteredBam,
+                indexedFiteredBam = FilterShortReadsBam.filteredBamIndex,
+                bwaIndex = bwaIndex,
+                predictions = clever.predictions,
+                outputPath = SVdir + 'mateclever/'
+        }
+
+        Pair[File, String] cleverVcfAndCaller = (mateclever.matecleverVcf, "clever")
     }
 
     call manta.Germline as manta {
@@ -163,7 +158,7 @@ workflow SVcalling {
     }
 
     Array[Pair[File,String]] vcfAndCaller = select_all([(delly2vcf.outputVcf, "delly"),
-        (manta.mantaVCF, "manta"), (cleverWorkaround.workaroundVcf, "clever"), smooveVcfAndCaller])
+        (manta.mantaVCF, "manta"), cleverVcfAndCaller, smooveVcfAndCaller, (gridssSvTyped.vcf, "gridss")])
 
     scatter (svtype in svtypes) {
         scatter (pair in vcfAndCaller) {
@@ -234,7 +229,19 @@ workflow SVcalling {
                 }
             }
 
-            File toBeMergedVcfs = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
+            # Survivor will parse the SVLEN incorrectly if it's the first value in INFO
+            # This will lead to it miscalculating the END value and thus merging SVs
+            # incorrectly. This workaround adds a meaningless value to the start of INFO
+            # if the first value is SVLEN.
+            if (pair.right == "clever") {
+                call CleverWorkaround as cleverWorkaround {
+                    input:
+                        vcf = select_first([removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf]),
+                        outputPath = prefix + '.workaround.vcf'
+                }
+            }
+
+            File toBeMergedVcfs = select_first([cleverWorkaround.workaroundVcf, removeMisHomRR.outputVcf, removeFpDupDel.outputVcf, setId.outputVcf])
         }
 
         call survivor.Merge as survivor {
@@ -255,8 +262,8 @@ workflow SVcalling {
     }
 
     output {
-        File cleverVcf = clever.predictions
-        File mateCleverVcf = mateclever.matecleverVcf
+        File? cleverVcf = clever.predictions
+        File? mateCleverVcf = mateclever.matecleverVcf
         File mantaVcf = manta.mantaVCF
         File dellyVcf = delly2vcf.outputVcf
         File? smooveVcf = smoove.smooveVcf
@@ -279,6 +286,7 @@ workflow SVcalling {
         sample: {description: "The name of the sample", category: "required"}
         runDupHold: {description: "Option to run duphold annotation and filter FP deletions and duplications.", category: "advanced"}
         runSmoove: {description: "Whether or not to run smoove.", category: "advanced"}
+        runClever: {description: "Whether or not to run clever.", category: "advanced"}
         excludeMisHomRef: {description: "Option to exclude missing and homozygous reference genotypes.", category: "advanced"}
         svtypes: {description: "List of svtypes to be further processed and output by the pipeline.", category: "advanced"}
         dockerImages: {description: "A map describing the docker image used for the tasks.",
