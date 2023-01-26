@@ -162,7 +162,7 @@ workflow SomaticSvCalling {
         }
 
         GroupedGridssVcf groupedVcfs = object {
-            vcf: groupedGridss.vcf, 
+            vcf: groupedGridss.vcf,
             index: groupedGridss.vcfIndex,
             normal: normalNameGridss,
             tumors: groupedTumorNamesGridss
