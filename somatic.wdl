@@ -96,7 +96,7 @@ workflow SomaticSvCalling {
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 genotypeBcf = dellySomaticFilter.filterBcf,
-                genotypeBcf = dellySomaticFilter.filterBcfIndex,
+                genotypeBcfIndex = dellySomaticFilter.filterBcfIndex,
                 outputPath = "~{outputDir}/~{selectedTumorName}/delly/~{selectedTumorName}.geno.delly.bcf"
         }
 
