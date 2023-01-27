@@ -26,7 +26,7 @@ version 1.0
 import "tasks/bwa.wdl" as bwa
 import "tasks/common.wdl" as common
 import "tasks/delly.wdl" as delly
-import "tasks/gridss.wsl" as gridss
+import "tasks/gridss.wdl" as gridss
 import "tasks/manta.wdl" as manta
 
 
@@ -48,77 +48,77 @@ workflow SomaticSvCalling {
     }
 
     scatter (pair in pairs) {
-        String tumorName = pair.left
-        String normalName = pair.right
+        String selectedTumorName = pair.left
+        String selectedNormalName = pair.right
 
         call common.GetSamplePositionInArray as tumorPosition {
             input:
                 sampleIds = tumorIds,
-                sample = tumorName
+                sample = selectedTumorName
         }
 
-        File tumorBam = tumorBams[tumorPosition.position]
-        File tumorBamIndex = tumorBamIndexes[tumorPosition.position]
+        File selectedTumorBam = tumorBams[tumorPosition.position]
+        File selectedTumorBamIndex = tumorBamIndexes[tumorPosition.position]
 
         call common.GetSamplePositionInArray as normalPosition {
             input:
                 sampleIds = normalIds,
-                sample = normalName
+                sample = selectedNormalName
         }
 
-        File normalBam = normalBams[normalPosition.position]
-        File normalBamIndex = normalBam[normalPosition.position]
+        File selectedNormalBam = normalBams[normalPosition.position]
+        File selectedNormalBamIndex = normalBamIndexes[normalPosition.position]
 
         # Delly
         call delly.CallSV as dellyCall {
             input:
-                bamFile = [tumorBam, normalBam],
-                bamIndex = [tumorBamIndex, normalBamIndex],
+                bamFile = [selectedTumorBam, selectedNormalBam],
+                bamIndex = [selectedTumorBamIndex, selectedNormalBamIndex],
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
-                outputPath = "~{outputDir}/delly/~{tumorName}_~{normalName}.delly.bcf"
+                outputPath = "~{outputDir}/~{selectedTumorName}/delly/~{selectedTumorName}_~{selectedNormalName}.delly.bcf"
         }
 
-        call delly.Filter as dellySomaticFilter {
+        call delly.SomaticFilter as dellySomaticFilter {
             input:
                 dellyBcf = dellyCall.dellyBcf,
                 dellyBcfIndex = dellyCall.dellyBcfIndex,
-                normalSamples = [normalName],
-                tumorSamples = [tumorName],
-                outputPath = "~{outputDir}/delly/~{tumorName}_~{normalName}.pre.delly.bcf"
+                normalSamples = [selectedNormalName],
+                tumorSamples = [selectedTumorName],
+                outputPath = "~{outputDir}/~{selectedTumorName}/delly/~{selectedTumorName}_~{selectedNormalName}.pre.delly.bcf"
         }
 
         #FIXME This may be parralellized per normal if it's too slow like this
         call delly.CallSV as dellyGenotypeNormals {
             input:
-                bamFile = flatten([[tumorBam], normalBams]),
-                bamIndex = flatten([[tumorBamIndex], normalBamIndexes]),
+                bamFile = flatten([[selectedTumorBam], normalBams]),
+                bamIndex = flatten([[selectedTumorBamIndex], normalBamIndexes]),
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 genotypeBcf = dellySomaticFilter.filterBcf,
                 genotypeBcf = dellySomaticFilter.filterBcfIndex,
-                outputPath = "~{outputDir}/delly/~{tumorName}.geno.delly.bcf"
+                outputPath = "~{outputDir}/~{selectedTumorName}/delly/~{selectedTumorName}.geno.delly.bcf"
         }
 
-        call delly.Filter as dellyPonFilter {
+        call delly.SomaticFilter as dellyPonFilter {
             input:
                 dellyBcf = dellyGenotypeNormals.dellyBcf,
                 dellyBcfIndex = dellyGenotypeNormals.dellyBcfIndex,
                 normalSamples = normalIds,
-                tumorSamples = [tumorName],
-                outputPath = "~{outputDir}/delly/~{tumorName}.somatic.delly.bcf"
+                tumorSamples = [selectedTumorName],
+                outputPath = "~{outputDir}/~{selectedTumorName}/delly/~{selectedTumorName}.somatic.delly.bcf"
         }
 
         # Manta
         call manta.Somatic as mantaSomatic {
             input:
-                tumorBam = tumorBam,
-                tumorBamIndex = tumorBamIndex,
+                tumorBam = selectedTumorBam,
+                tumorBamIndex = selectedTumorBamIndex,
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
-                runDir = "~{outputDir}/manta",
-                normalBam = normalBam,
-                normalBamIndex = normalBamIndex
+                runDir = "~{outputDir}/~{selectedTumorName}/manta",
+                normalBam = selectedNormalBam,
+                normalBamIndex = selectedNormalBamIndex
         }
     }
 
@@ -143,64 +143,102 @@ workflow SomaticSvCalling {
                         sample = tumorNameGridss
                 }
 
-                File tumorBamGridss = tumorBam[tumorPositionGridss.position]
+                File tumorBamGridss = tumorBams[tumorPositionGridss.position]
                 File tumorBamIndexGridss = tumorBamIndexes[tumorPositionGridss.position]
             }
         }
-        Array[String] tumorNamesGridss = select_all(tumorNameGridss)
-        Array[File] tumorBamsGridss = select_all(tumorBamGridss)
-        Array[File] tumorBamIndexesGridss = select_all(tumorBamIndexGridss)
+        Array[String] groupedTumorNamesGridss = select_all(tumorNameGridss)
+        Array[File] groupedTumorBamsGridss = select_all(tumorBamGridss)
+        Array[File] groupedTumorBamIndexesGridss = select_all(tumorBamIndexGridss)
 
         # Call GRIDSS on the grouped samples
         call gridss.GRIDSS as groupedGridss {
             input:
-                tumorBam = tumorBamsGridss,
-                tumorBai = tumorBamIndexesGridss,
-                tumorLabel = tumorNamesGridss,
+                tumorBam = groupedTumorBamsGridss,
+                tumorBai = groupedTumorBamIndexesGridss,
+                tumorLabel = groupedTumorNamesGridss,
                 reference = bwaIndex,
-                outputPrefix = "~{outputdir}/~{normalNameGridss}_group",
+                outputPrefix = "~{outputDir}/gridss/~{normalNameGridss}/group",
                 normalBam = normalBamGridss,
                 normalBai = normalBamIndexGridss,
                 normalLabel = normalNameGridss
         }
+
+        GroupedGridssVcf groupedVcfs = object {
+            vcf: groupedGridss.vcf,
+            index: groupedGridss.vcfIndex,
+            normal: normalNameGridss,
+            tumors: groupedTumorNamesGridss
+        }
     }
 
-    # generate PON
+    # generate GRIDSS PON
     if (! defined(gridssPonBed) || ! defined(gridssPonBedpe)) {
         call gridss.GeneratePonBedpe as generateGridssPon {
             input:
                 vcfFiles = groupedGridss.vcf,
                 vcfIndexes = groupedGridss.vcfIndex,
-                referenceFasta = referenceFasta
+                referenceFasta = referenceFasta,
+                outputDir = "~{outputDir}/gridss/raw_PON"
         }
 
         call gridss.FilterPon as filterGridssPon {
             input:
                 ponBed = generateGridssPon.bed,
-                ponBedpe = generateGridssPon.bedpe
+                ponBedpe = generateGridssPon.bedpe,
+                outputDir = "~{outputDir}/gridss/filtered_PON"
         }
     }
 
     # somatic filter
-    call gridss.SomaticFilter as gridssSomaticFilter {
-        input:
-            ponBed = select_first([filterGridssPon.bed, gridssPonBed]),
-            ponBedpe = select_first([filterGridssPon.bedpe, gridssPonBedpe]),
-            vcfFile = groupedGridss.vcf,
-            vcfIndex = groupedGridss.vcfIndex
+    scatter (groupedVcf in groupedVcfs) {
+        call gridss.SomaticFilter as gridssSomaticFilter {
+            input:
+                ponBed = select_first([gridssPonBed, filterGridssPon.bed]),
+                ponBedpe = select_first([gridssPonBedpe, filterGridssPon.bedpe]),
+                vcfFile = groupedVcf.vcf,
+                vcfIndex = groupedVcf.index,
+                outputPath = "~{outputDir}/gridss/~{groupedVcf.normal}/high_confidence_somatic.vcf.gz",
+                fullOutputPath = "~{outputDir}/gridss/~{groupedVcf.normal}/high_and_low_confidence_somatic.vcf.gz"
+        }
+
+        #TODO split by tumor sample?
+        #TODO gridss SV typing?
     }
-    
-    #TODO gridss SV typing?
-    #TODO split by tumor sample?
 
     output {
         Array[File] dellySvBcfs = dellyPonFilter.filterBcf
         Array[File] mantaSvVcfs = mantaSomatic.tumorSVVcf
-        Array[File] mantaSvVcfIndexes = mantaSomatic.tumorSVVcf
+        Array[File] mantaSvVcfIndexes = mantaSomatic.tumorSVVcfIndex
         Array[File] gridssSvVcfs = gridssSomaticFilter.highConfidenceVcf
         Array[File] gridssSvVcfIndexes = gridssSomaticFilter.highConfidenceVcfIndex
-        Array[File] fullGridssSvs = gridssSomaticFilter.fullOutput
+        Array[File] fullGridssSvs = gridssSomaticFilter.fullVcf
+        Array[File] fullGridssSvsIndex = gridssSomaticFilter.fullVcfIndex
         File? generatedGridssPonBed = filterGridssPon.bed
         File? generatedGridssPonBedpe = filterGridssPon.bedpe
     }
+
+    parameter_meta {
+        normalIds: {description: "The IDs of the normal samples in the same order as the BAM files.", category: "required"}
+        normalBams: {description: "The BAM files for the normal samples in the same order as IDs.", category: "required"}
+        normalBamIndexes: {description: "The indexes for the normal BAM files in the same order as the BAM files.", category: "required"}
+        tumorIds: {description: "The IDs of the tumor samples in the same order as the BAM files.", category: "required"}
+        tumorBams: {description: "The BAM files for the tumor samples in the same order as IDs.", category: "required"}
+        tumorBamIndexes: {description: "The indexes for the tumor BAM files in the same order as the BAM files.", category: "required"}
+        pairs: {description: "The tumor-normal pairs. The left element is the ID for the tumor and the right element is the ID for the associated normal.", category: "required"}
+        referenceFasta: {description: "The FASTA file for the reference genome.", category: "required"}
+        referenceFastaFai: {description: "The index for the reference genomes FASTA file.", category: "required"}
+        bwaIndex: {description: "The BWA index for the reference genome.", category: "required"}
+        outputDir: {description: "The directory the output should be written to.", category: "common"}
+        gridssPonBed: {description: "A premade PON single breakend BED file for GRIDSS.", category: "common"}
+        gridssPonBedpe: {description: "A premade PON breakpoint BEDPE file for GRIDSS.", category: "common"}
+    }
+}
+
+
+struct GroupedGridssVcf {
+    File vcf
+    File index
+    String normal
+    Array[String] tumors
 }
