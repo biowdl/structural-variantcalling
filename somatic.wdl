@@ -82,6 +82,7 @@ workflow SomaticSvCalling {
         call delly.Filter as dellySomaticFilter {
             input:
                 dellyBcf = dellyCall.dellyBcf,
+                dellyBcfIndex = dellyCall.dellyBcfIndex,
                 normalSamples = [normalName],
                 tumorSamples = [tumorName],
                 outputPath = "~{outputDir}/delly/~{tumorName}_~{normalName}.pre.delly.bcf"
@@ -95,12 +96,14 @@ workflow SomaticSvCalling {
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 genotypeBcf = dellySomaticFilter.filterBcf,
+                genotypeBcf = dellySomaticFilter.filterBcfIndex,
                 outputPath = "~{outputDir}/delly/~{tumorName}.geno.delly.bcf"
         }
 
         call delly.Filter as dellyPonFilter {
             input:
                 dellyBcf = dellyGenotypeNormals.dellyBcf,
+                dellyBcfIndex = dellyGenotypeNormals.dellyBcfIndex,
                 normalSamples = normalIds,
                 tumorSamples = [tumorName],
                 outputPath = "~{outputDir}/delly/~{tumorName}.somatic.delly.bcf"
