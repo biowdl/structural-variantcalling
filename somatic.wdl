@@ -179,6 +179,7 @@ workflow SomaticSvCalling {
                 vcfFiles = groupedGridss.vcf,
                 vcfIndexes = groupedGridss.vcfIndex,
                 referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
                 outputDir = "~{outputDir}/gridss/raw_PON"
         }
 
