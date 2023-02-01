@@ -199,8 +199,8 @@ workflow SomaticSvCalling {
                 ponBedpe = select_first([gridssPonBedpe, filterGridssPon.bedpe]),
                 vcfFile = groupedVcf.vcf,
                 vcfIndex = groupedVcf.index,
-                outputPath = "~{outputDir}/gridss/~{groupedVcf.normal}/high_confidence_somatic.vcf.bgz",
-                fullOutputPath = "~{outputDir}/gridss/~{groupedVcf.normal}/high_and_low_confidence_somatic.vcf.bgz"
+                outputPath = "~{outputDir}/gridss/~{groupedVcf.normal}/high_confidence_somatic.vcf",
+                fullOutputPath = "~{outputDir}/gridss/~{groupedVcf.normal}/high_and_low_confidence_somatic.vcf"
         }
 
         #TODO split by tumor sample?
