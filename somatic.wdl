@@ -22,7 +22,7 @@ version 1.0
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
+import "tasks/bcftools.wdl" as bcftools
 import "tasks/bwa.wdl" as bwa
 import "tasks/common.wdl" as common
 import "tasks/delly.wdl" as delly
@@ -107,6 +107,12 @@ workflow SomaticSvCalling {
                 normalSamples = normalIds,
                 tumorSamples = [selectedTumorName],
                 outputPath = "~{outputDir}/~{selectedTumorName}/delly/~{selectedTumorName}.somatic.delly.bcf"
+        }
+
+        call bcftools.View as dellyBcfToVcf {
+            input:
+                inputFile = dellyPonFilter.filterBcf,
+                outputPath = "~{outputDir}/~{selectedTumorName}/delly/~{selectedTumorName}.somatic.delly.vcf"
         }
 
         # Manta
@@ -203,18 +209,35 @@ workflow SomaticSvCalling {
                 fullOutputPath = "~{outputDir}/gridss/~{groupedVcf.normal}/high_and_low_confidence_somatic.vcf"
         }
 
-        #TODO split by tumor sample?
-        #TODO gridss SV typing?
+        scatter (gridssTumorSample in groupedVcf.tumors) {
+            call bcftools.View as gridssSeparateSamples {
+                input:
+                    inputFile = gridssSomaticFilter.highConfidenceVcf,
+                    outputPath = "~{outputDir}/~{gridssTumorSample}/gridss/~{gridssTumorSample}.somatic.gridss.vcf.gz",
+                    samples = [gridssTumorSample]
+            }
+            
+            call gridss.AnnotateSvTypes as gridssSvTyped {
+                input:
+                    gridssVcf = gridssSeparateSamples.outputVcf,
+                    gridssVcfIndex = select_first([gridssSeparateSamples.outputVcfIndex]),
+                    outputPath = "~{outputDir}/~{gridssTumorSample}/gridss/~{gridssTumorSample}.somatic.gridss.svtyped.vcf.bgz",
+            }
+        }
     }
 
     output {
-        Array[File] dellySvBcfs = dellyPonFilter.filterBcf
+        Array[File] dellySvVcfs = dellyBcfToVcf.outputVcf
         Array[File] mantaSvVcfs = mantaSomatic.tumorSVVcf
         Array[File] mantaSvVcfIndexes = mantaSomatic.tumorSVVcfIndex
-        Array[File] gridssSvVcfs = gridssSomaticFilter.highConfidenceVcf
-        Array[File] gridssSvVcfIndexes = gridssSomaticFilter.highConfidenceVcfIndex
+        Array[File] gridssGroupedSvVcfs = gridssSomaticFilter.highConfidenceVcf
+        Array[File] gridssGroupedSvVcfIndexes = gridssSomaticFilter.highConfidenceVcfIndex
         Array[File] fullGridssSvs = gridssSomaticFilter.fullVcf
         Array[File] fullGridssSvsIndex = gridssSomaticFilter.fullVcfIndex
+        Array[File] gridssSvVcf = flatten(gridssSeparateSamples.outputVcf)
+        Array[File] gridssSvVcfIndex = select_all(flatten(gridssSeparateSamples.outputVcfIndex))
+        Array[File] gridssSvTypedVcf = flatten(gridssSvTyped.vcf)
+        Array[File?] gridssSvTypedVcfIndex = flatten(gridssSvTyped.vcfIndex)
         File? generatedGridssPonBed = filterGridssPon.bed
         File? generatedGridssPonBedpe = filterGridssPon.bedpe
     }
