@@ -86,8 +86,8 @@ workflow SVcalling {
     call delly.CallSV as delly {
         input:
             dockerImage = dockerImages["delly"],
-            bamFile = bamFile,
-            bamIndex = bamIndex,
+            bamFile = [bamFile],
+            bamIndex = [bamIndex],
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
             outputPath = SVdir + 'delly/' + sample + ".delly.bcf"
@@ -143,9 +143,9 @@ workflow SVcalling {
     call gridssTasks.GRIDSS as gridss {
         input:
             dockerImage = dockerImages["gridss"],
-            tumorBam = bamFile,
-            tumorBai = bamIndex,
-            tumorLabel = sample,
+            tumorBam = [bamFile],
+            tumorBai = [bamIndex],
+            tumorLabel = [sample],
             reference = bwaIndex,
             outputPrefix = SVdir + "gridss/~{sample}.gridss"
     }
