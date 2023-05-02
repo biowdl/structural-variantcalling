@@ -8,7 +8,7 @@ Newest changes should be on top.
 This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
-version 1.3.0-dev
+version 1.3.0
 ---------------------
 + Added a workflow for somatic SV calling using GRIDSS, delly and manta.
 + Clever is now disabled by default. It can be enabled by setting `SVcalling.runClever` to `true`.
