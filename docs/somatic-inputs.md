@@ -101,6 +101,41 @@ SomaticSvCalling.
 <details>
 <summary> Show/Hide </summary>
 <dl>
+<dt id="SomaticSvCalling.dellyBcfToVcf.dockerImage"><a href="#SomaticSvCalling.dellyBcfToVcf.dockerImage">SomaticSvCalling.dellyBcfToVcf.dockerImage</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2"</code><br />
+    The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
+</dd>
+<dt id="SomaticSvCalling.dellyBcfToVcf.exclude"><a href="#SomaticSvCalling.dellyBcfToVcf.exclude">SomaticSvCalling.dellyBcfToVcf.exclude</a></dt>
+<dd>
+    <i>String? </i><br />
+    Exclude sites for which the expression is true (see man page for details).
+</dd>
+<dt id="SomaticSvCalling.dellyBcfToVcf.excludeUncalled"><a href="#SomaticSvCalling.dellyBcfToVcf.excludeUncalled">SomaticSvCalling.dellyBcfToVcf.excludeUncalled</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
+    Exclude sites without a called genotype (see man page for details).
+</dd>
+<dt id="SomaticSvCalling.dellyBcfToVcf.include"><a href="#SomaticSvCalling.dellyBcfToVcf.include">SomaticSvCalling.dellyBcfToVcf.include</a></dt>
+<dd>
+    <i>String? </i><br />
+    Select sites for which the expression is true (see man page for details).
+</dd>
+<dt id="SomaticSvCalling.dellyBcfToVcf.memory"><a href="#SomaticSvCalling.dellyBcfToVcf.memory">SomaticSvCalling.dellyBcfToVcf.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"256MiB"</code><br />
+    The amount of memory this job will use.
+</dd>
+<dt id="SomaticSvCalling.dellyBcfToVcf.samples"><a href="#SomaticSvCalling.dellyBcfToVcf.samples">SomaticSvCalling.dellyBcfToVcf.samples</a></dt>
+<dd>
+    <i>Array[String] </i><i>&mdash; Default:</i> <code>[]</code><br />
+    A list of sample names to include.
+</dd>
+<dt id="SomaticSvCalling.dellyBcfToVcf.timeMinutes"><a href="#SomaticSvCalling.dellyBcfToVcf.timeMinutes">SomaticSvCalling.dellyBcfToVcf.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
 <dt id="SomaticSvCalling.dellyCall.dockerImage"><a href="#SomaticSvCalling.dellyCall.dockerImage">SomaticSvCalling.dellyCall.dockerImage</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"quay.io/biocontainers/delly:1.1.6--ha41ced6_0"</code><br />
@@ -123,7 +158,7 @@ SomaticSvCalling.
 </dd>
 <dt id="SomaticSvCalling.dellyCall.timeMinutes"><a href="#SomaticSvCalling.dellyCall.timeMinutes">SomaticSvCalling.dellyCall.timeMinutes</a></dt>
 <dd>
-    <i>Int </i><i>&mdash; Default:</i> <code>300</code><br />
+    <i>Int </i><i>&mdash; Default:</i> <code>600</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
 <dt id="SomaticSvCalling.dellyGenotypeNormals.dockerImage"><a href="#SomaticSvCalling.dellyGenotypeNormals.dockerImage">SomaticSvCalling.dellyGenotypeNormals.dockerImage</a></dt>
@@ -138,7 +173,7 @@ SomaticSvCalling.
 </dd>
 <dt id="SomaticSvCalling.dellyGenotypeNormals.timeMinutes"><a href="#SomaticSvCalling.dellyGenotypeNormals.timeMinutes">SomaticSvCalling.dellyGenotypeNormals.timeMinutes</a></dt>
 <dd>
-    <i>Int </i><i>&mdash; Default:</i> <code>300</code><br />
+    <i>Int </i><i>&mdash; Default:</i> <code>600</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
 <dt id="SomaticSvCalling.dellyPonFilter.dockerImage"><a href="#SomaticSvCalling.dellyPonFilter.dockerImage">SomaticSvCalling.dellyPonFilter.dockerImage</a></dt>
@@ -216,6 +251,36 @@ SomaticSvCalling.
     <i>Int </i><i>&mdash; Default:</i> <code>120</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
+<dt id="SomaticSvCalling.gridssSeparateSamples.dockerImage"><a href="#SomaticSvCalling.gridssSeparateSamples.dockerImage">SomaticSvCalling.gridssSeparateSamples.dockerImage</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2"</code><br />
+    The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
+</dd>
+<dt id="SomaticSvCalling.gridssSeparateSamples.exclude"><a href="#SomaticSvCalling.gridssSeparateSamples.exclude">SomaticSvCalling.gridssSeparateSamples.exclude</a></dt>
+<dd>
+    <i>String? </i><br />
+    Exclude sites for which the expression is true (see man page for details).
+</dd>
+<dt id="SomaticSvCalling.gridssSeparateSamples.excludeUncalled"><a href="#SomaticSvCalling.gridssSeparateSamples.excludeUncalled">SomaticSvCalling.gridssSeparateSamples.excludeUncalled</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
+    Exclude sites without a called genotype (see man page for details).
+</dd>
+<dt id="SomaticSvCalling.gridssSeparateSamples.include"><a href="#SomaticSvCalling.gridssSeparateSamples.include">SomaticSvCalling.gridssSeparateSamples.include</a></dt>
+<dd>
+    <i>String? </i><br />
+    Select sites for which the expression is true (see man page for details).
+</dd>
+<dt id="SomaticSvCalling.gridssSeparateSamples.memory"><a href="#SomaticSvCalling.gridssSeparateSamples.memory">SomaticSvCalling.gridssSeparateSamples.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"256MiB"</code><br />
+    The amount of memory this job will use.
+</dd>
+<dt id="SomaticSvCalling.gridssSeparateSamples.timeMinutes"><a href="#SomaticSvCalling.gridssSeparateSamples.timeMinutes">SomaticSvCalling.gridssSeparateSamples.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
 <dt id="SomaticSvCalling.gridssSomaticFilter.dockerImage"><a href="#SomaticSvCalling.gridssSomaticFilter.dockerImage">SomaticSvCalling.gridssSomaticFilter.dockerImage</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"quay.io/biowdl/gridss:2.12.2"</code><br />
@@ -229,6 +294,21 @@ SomaticSvCalling.
 <dt id="SomaticSvCalling.gridssSomaticFilter.timeMinutes"><a href="#SomaticSvCalling.gridssSomaticFilter.timeMinutes">SomaticSvCalling.gridssSomaticFilter.timeMinutes</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>60</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="SomaticSvCalling.gridssSvTyped.dockerImage"><a href="#SomaticSvCalling.gridssSvTyped.dockerImage">SomaticSvCalling.gridssSvTyped.dockerImage</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"quay.io/biocontainers/bioconductor-structuralvariantannotation:1.10.0--r41hdfd78af_0"</code><br />
+    The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
+</dd>
+<dt id="SomaticSvCalling.gridssSvTyped.memory"><a href="#SomaticSvCalling.gridssSvTyped.memory">SomaticSvCalling.gridssSvTyped.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"32GiB"</code><br />
+    The amount of memory this job will use.
+</dd>
+<dt id="SomaticSvCalling.gridssSvTyped.timeMinutes"><a href="#SomaticSvCalling.gridssSvTyped.timeMinutes">SomaticSvCalling.gridssSvTyped.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>240</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
 <dt id="SomaticSvCalling.groupedGridss.blacklistBed"><a href="#SomaticSvCalling.groupedGridss.blacklistBed">SomaticSvCalling.groupedGridss.blacklistBed</a></dt>

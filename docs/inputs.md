@@ -143,7 +143,7 @@ SVcalling.
 </dd>
 <dt id="SVcalling.delly.timeMinutes"><a href="#SVcalling.delly.timeMinutes">SVcalling.delly.timeMinutes</a></dt>
 <dd>
-    <i>Int </i><i>&mdash; Default:</i> <code>300</code><br />
+    <i>Int </i><i>&mdash; Default:</i> <code>600</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
 <dt id="SVcalling.delly2vcf.exclude"><a href="#SVcalling.delly2vcf.exclude">SVcalling.delly2vcf.exclude</a></dt>
@@ -165,6 +165,11 @@ SVcalling.
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"256MiB"</code><br />
     The amount of memory this job will use.
+</dd>
+<dt id="SVcalling.delly2vcf.samples"><a href="#SVcalling.delly2vcf.samples">SVcalling.delly2vcf.samples</a></dt>
+<dd>
+    <i>Array[String] </i><i>&mdash; Default:</i> <code>[]</code><br />
+    A list of sample names to include.
 </dd>
 <dt id="SVcalling.delly2vcf.timeMinutes"><a href="#SVcalling.delly2vcf.timeMinutes">SVcalling.delly2vcf.timeMinutes</a></dt>
 <dd>
@@ -206,6 +211,11 @@ SVcalling.
     <i>String </i><i>&mdash; Default:</i> <code>"256MiB"</code><br />
     The amount of memory this job will use.
 </dd>
+<dt id="SVcalling.getIntersections.samples"><a href="#SVcalling.getIntersections.samples">SVcalling.getIntersections.samples</a></dt>
+<dd>
+    <i>Array[String] </i><i>&mdash; Default:</i> <code>[]</code><br />
+    A list of sample names to include.
+</dd>
 <dt id="SVcalling.getIntersections.timeMinutes"><a href="#SVcalling.getIntersections.timeMinutes">SVcalling.getIntersections.timeMinutes</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
@@ -225,6 +235,11 @@ SVcalling.
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"256MiB"</code><br />
     The amount of memory this job will use.
+</dd>
+<dt id="SVcalling.getSVtype.samples"><a href="#SVcalling.getSVtype.samples">SVcalling.getSVtype.samples</a></dt>
+<dd>
+    <i>Array[String] </i><i>&mdash; Default:</i> <code>[]</code><br />
+    A list of sample names to include.
 </dd>
 <dt id="SVcalling.getSVtype.timeMinutes"><a href="#SVcalling.getSVtype.timeMinutes">SVcalling.getSVtype.timeMinutes</a></dt>
 <dd>
@@ -341,6 +356,11 @@ SVcalling.
     <i>String </i><i>&mdash; Default:</i> <code>"256MiB"</code><br />
     The amount of memory this job will use.
 </dd>
+<dt id="SVcalling.removeFpDupDel.samples"><a href="#SVcalling.removeFpDupDel.samples">SVcalling.removeFpDupDel.samples</a></dt>
+<dd>
+    <i>Array[String] </i><i>&mdash; Default:</i> <code>[]</code><br />
+    A list of sample names to include.
+</dd>
 <dt id="SVcalling.removeFpDupDel.timeMinutes"><a href="#SVcalling.removeFpDupDel.timeMinutes">SVcalling.removeFpDupDel.timeMinutes</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
@@ -355,6 +375,11 @@ SVcalling.
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"256MiB"</code><br />
     The amount of memory this job will use.
+</dd>
+<dt id="SVcalling.removeMisHomRR.samples"><a href="#SVcalling.removeMisHomRR.samples">SVcalling.removeMisHomRR.samples</a></dt>
+<dd>
+    <i>Array[String] </i><i>&mdash; Default:</i> <code>[]</code><br />
+    A list of sample names to include.
 </dd>
 <dt id="SVcalling.removeMisHomRR.timeMinutes"><a href="#SVcalling.removeMisHomRR.timeMinutes">SVcalling.removeMisHomRR.timeMinutes</a></dt>
 <dd>
